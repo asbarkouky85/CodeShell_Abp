@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<RootNamespace>Codeshell.Abp</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="EPPlus.Core" Version="1.5.4" />
+		<!--<PackageReference Include="Open-XML-SDK" Version="2.9.1" />-->
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Codeshell.Abp.Domain.Shared\Codeshell.Abp.Domain.Shared.csproj" />
+	</ItemGroup>
+</Project>
