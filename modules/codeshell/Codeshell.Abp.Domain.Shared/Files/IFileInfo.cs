@@ -8,7 +8,7 @@ namespace Codeshell.Abp.Files
     {
         string FileName { get; }
         string Extension { get; }
-        int? Size { get; }
+        long? Size { get; }
         FileDimesion Dimesion { get; }
 
     }

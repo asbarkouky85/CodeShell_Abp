@@ -25,6 +25,10 @@ namespace Codeshell.Abp
     public enum CharType { Capital, Small, Both }
     public static class Utils
     {
+        static Random r = new Random();
+        static int Addition = 0;
+        static int currentSecond;
+
         private static LoggerConfiguration eventLoggerConf;
         public static Serilog.ILogger EventLogger { get; private set; }
         public static void StartEventsLogger(LoggerConfiguration loggerConfiguration)
@@ -43,6 +47,26 @@ namespace Codeshell.Abp
             FileInfo info = new FileInfo(filePath);
             if (!Directory.Exists(info.Directory.FullName))
                 Directory.CreateDirectory(info.Directory.FullName);
+        }
+
+        public static long GenerateID()
+        {
+            DateTime t = DateTime.Now;
+
+            int thisSec = (int)t.TimeOfDay.TotalSeconds;
+
+            if (thisSec == currentSecond)
+                Addition++;
+            else
+                Addition = 0;
+
+            currentSecond = thisSec;
+
+            string st = (t.Year - 2000).ToString()
+                + t.DayOfYear.ToString("D3")
+                + currentSecond.ToString("D5")
+                + Addition.ToString("D3");
+            return long.Parse(st);
         }
 
         public static bool TryParseDate(string str, string[] formats, out DateTime t)

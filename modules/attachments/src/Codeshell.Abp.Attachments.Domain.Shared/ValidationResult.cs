@@ -4,7 +4,7 @@
     {
         public string Message { get; private set; }
         public string[] Parameters { get; private set; }
-
+        public string ErrorMessage { get; private set; }
         public ValidationResult(string v, string[] strings)
         {
             this.Message = v;

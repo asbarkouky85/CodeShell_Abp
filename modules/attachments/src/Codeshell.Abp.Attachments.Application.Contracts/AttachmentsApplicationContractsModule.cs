@@ -7,7 +7,7 @@ namespace Codeshell.Abp.Attachments
     [DependsOn(
         typeof(AttachmentsDomainSharedModule),
         typeof(AbpDddApplicationContractsModule),
-        typeof(AbpAuthorizationModule)
+        typeof(AbpAuthorizationAbstractionsModule)
         )]
     public class AttachmentsApplicationContractsModule : AbpModule
     {

@@ -1,6 +1,5 @@
 ﻿using Codeshell.Abp.Files;
 using System;
-using Volo.Abp.Application.Dtos;
 
 namespace Codeshell.Abp.Attachments
 {
@@ -13,7 +12,7 @@ namespace Codeshell.Abp.Attachments
         public string FileName { get; set; }
         public string Extension { get; set; }
         public string Chunk { get; set; }
-        public int? Size { get; set; }
+        public long? Size { get; set; }
 
         public FileDimesion Dimesion { get; set; }
     }

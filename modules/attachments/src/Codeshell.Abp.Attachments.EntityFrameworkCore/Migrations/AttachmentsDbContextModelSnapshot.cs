@@ -40,9 +40,9 @@ namespace Codeshell.Abp.Attachments.Migrations
                         .HasColumnType("nvarchar(60)");
 
                     b.Property<string>("ContentType")
-                        .HasMaxLength(255)
+                        .HasMaxLength(800)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(800)");
 
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2")
@@ -86,6 +86,9 @@ namespace Codeshell.Abp.Attachments.Migrations
                     b.Property<Guid?>("LastModifierId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("LastModifierId");
+
+                    b.Property<long?>("Size")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -151,14 +154,14 @@ namespace Codeshell.Abp.Attachments.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("NameAr")
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)");
+                        .HasMaxLength(100)
+                        .IsUnicode(true)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("NameEn")
-                        .HasMaxLength(50)
+                        .HasMaxLength(100)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("ValidExtensions")
                         .HasMaxLength(500)
@@ -255,10 +258,13 @@ namespace Codeshell.Abp.Attachments.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int>("AttachmentCategoryId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ContentType")
-                        .HasMaxLength(60)
+                        .HasMaxLength(800)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(60)");
+                        .HasColumnType("varchar(800)");
 
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2")
@@ -288,9 +294,43 @@ namespace Codeshell.Abp.Attachments.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("LastModifierId");
 
+                    b.Property<string>("ReferenceId")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<long?>("Size")
+                        .HasColumnType("bigint");
+
+                    b.Property<int?>("TotalChunkCount")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("AttachmentCategoryId");
+
                     b.ToTable("Att_TempFiles", (string)null);
+                });
+
+            modelBuilder.Entity("Codeshell.Abp.Attachments.TempFileChunk", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ChunkIndex")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReferenceId")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<Guid>("TempFileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TempFileId");
+
+                    b.ToTable("Att_TempFileChunks", (string)null);
                 });
 
             modelBuilder.Entity("Codeshell.Abp.Attachments.Attachment", b =>
@@ -314,7 +354,7 @@ namespace Codeshell.Abp.Attachments.Migrations
 
             modelBuilder.Entity("Codeshell.Abp.Attachments.AttachmentCategory", b =>
                 {
-                    b.OwnsOne("Codeshell.Abp.Attachments.AttachmentCategory.MaxDimension#Codeshell.Abp.Attachments.Dimension", "MaxDimension", b1 =>
+                    b.OwnsOne("Codeshell.Abp.Attachments.Dimension", "MaxDimension", b1 =>
                         {
                             b1.Property<int>("AttachmentCategoryId")
                                 .HasColumnType("int");
@@ -329,7 +369,7 @@ namespace Codeshell.Abp.Attachments.Migrations
 
                             b1.HasKey("AttachmentCategoryId");
 
-                            b1.ToTable("Att_AttachmentCategories", (string)null);
+                            b1.ToTable("Att_AttachmentCategories");
 
                             b1.WithOwner()
                                 .HasForeignKey("AttachmentCategoryId");
@@ -349,6 +389,28 @@ namespace Codeshell.Abp.Attachments.Migrations
                     b.Navigation("AttachmentCategory");
                 });
 
+            modelBuilder.Entity("Codeshell.Abp.Attachments.TempFile", b =>
+                {
+                    b.HasOne("Codeshell.Abp.Attachments.AttachmentCategory", "AttachmentCategory")
+                        .WithMany("TempFiles")
+                        .HasForeignKey("AttachmentCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AttachmentCategory");
+                });
+
+            modelBuilder.Entity("Codeshell.Abp.Attachments.TempFileChunk", b =>
+                {
+                    b.HasOne("Codeshell.Abp.Attachments.TempFile", "TempFile")
+                        .WithMany("Chunks")
+                        .HasForeignKey("TempFileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TempFile");
+                });
+
             modelBuilder.Entity("Codeshell.Abp.Attachments.AttachmentBinary", b =>
                 {
                     b.Navigation("Attachment");
@@ -359,6 +421,13 @@ namespace Codeshell.Abp.Attachments.Migrations
                     b.Navigation("AttachmentCategoryPermissions");
 
                     b.Navigation("Attachments");
+
+                    b.Navigation("TempFiles");
+                });
+
+            modelBuilder.Entity("Codeshell.Abp.Attachments.TempFile", b =>
+                {
+                    b.Navigation("Chunks");
                 });
 #pragma warning restore 612, 618
         }

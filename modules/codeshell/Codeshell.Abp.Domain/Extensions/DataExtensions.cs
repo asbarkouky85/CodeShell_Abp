@@ -1,4 +1,5 @@
 ﻿using Codeshell.Abp.Contracts;
+using Codeshell.Abp.Data;
 using Codeshell.Abp.Extensions;
 using Codeshell.Abp.Extensions.Linq;
 using Codeshell.Abp.Linq;
@@ -8,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Volo.Abp.Auditing;
 using Volo.Abp.Data;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
@@ -18,7 +20,7 @@ namespace Codeshell.Abp.Extensions.Data
 {
     public static class DataExtensions
     {
-
+        
 
         public static List<T> GetChangedItems<T>(this IEnumerable<T> lst) where T : class, IDetailObject
         {
@@ -52,7 +54,9 @@ namespace Codeshell.Abp.Extensions.Data
         public static async Task MergeAsyncAndUpdate<TEntity, TPrime>(
             this IRepository<TEntity, TPrime> repo,
             IEnumerable<TEntity> list,
-            Func<TEntity, Func<TEntity, bool>> finder) where TEntity : class, IEntity<TPrime>, IUpdateFrom<TEntity, TPrime>
+            Func<TEntity, Func<TEntity, bool>> finder,
+            bool skipUpdateIfModified = true
+            ) where TEntity : class, IEntity<TPrime>, IModificationAuditedObject, IUpdateFrom<TEntity, TPrime>
         {
             var existingList = await repo.GetListAsync();
             foreach (var item in list)
@@ -64,7 +68,8 @@ namespace Codeshell.Abp.Extensions.Data
                 }
                 else
                 {
-                    existing.UpdateFrom(item);
+                    if (!skipUpdateIfModified || item.LastModifierId == null)
+                        existing.UpdateFrom(item);
                 }
             }
         }

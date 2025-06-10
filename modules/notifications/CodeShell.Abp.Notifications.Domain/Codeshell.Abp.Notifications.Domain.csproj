@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<RootNamespace>Codeshell.Abp.Notifications</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\codeshell\Codeshell.Abp.Domain\Codeshell.Abp.Domain.csproj" />
+	  <ProjectReference Include="..\Codeshell.Abp.Notifications.Domain.Shared\Codeshell.Abp.Notifications.Domain.Shared.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Attachments\" />
+	</ItemGroup>
+
+</Project>

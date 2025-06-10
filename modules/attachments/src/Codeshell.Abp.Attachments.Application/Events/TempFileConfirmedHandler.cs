@@ -1,14 +1,16 @@
 ﻿using Codeshell.Abp;
+using Codeshell.Abp.Attachments.Events;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.EventBus.Distributed;
+using Volo.Abp.Uow;
 
 namespace Codeshell.Abp.Attachments.Events
 {
-    public class TempFileConfirmedHandler : IDistributedEventHandler<TempFileConfirmed>,ITransientDependency
+    public class TempFileConfirmedHandler : IDistributedEventHandler<TempFileConfirmed>, ITransientDependency
     {
         private readonly IAttachmentFileService svc;
 
@@ -16,12 +18,13 @@ namespace Codeshell.Abp.Attachments.Events
         {
             this.svc = svc;
         }
-        public Task HandleEventAsync(TempFileConfirmed eventData)
+
+        [UnitOfWork]
+        public virtual async Task HandleEventAsync(TempFileConfirmed eventData)
         {
-            return Utils.HandleEvent(eventData, async () =>
-            {
-                await svc.SaveAttachment(eventData.SaveRequest);
-            });
+
+            await svc.SaveAttachment(eventData.SaveRequest);
+
         }
     }
 }

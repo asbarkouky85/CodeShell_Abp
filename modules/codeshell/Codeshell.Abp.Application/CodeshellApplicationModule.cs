@@ -22,6 +22,7 @@ namespace Codeshell.Abp
             {
                 options.AddMaps<CodeshellApplicationModule>(validate: false);
             });
+          
         }
     }
 }

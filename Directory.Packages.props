@@ -1,0 +1,64 @@
+<Project>
+	<PropertyGroup>
+		<LangVersion>latest</LangVersion>
+		<Version>0.1.0</Version>
+		<NoWarn>$(NoWarn);CS1591</NoWarn>
+		<AbpProjectType>module</AbpProjectType>
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageVersion Include="ConfigureAwait.Fody" Version="3.3.1" PrivateAssets="All" />
+		<PackageVersion Include="EPPlus.Core" Version="1.5.4" />
+		<PackageVersion Include="Fody" Version="6.5.3" />
+		<PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.0" />
+		<PackageVersion Include="Microsoft.AspNetCore.Http.Features" Version="5.0.1" />
+		<PackageVersion Include="Microsoft.Extensions.FileProviders.Embedded" Version="6.0.5" />
+		<PackageVersion Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+		<PackageVersion Include="Newtonsoft.Json" Version="12.0.3" />
+		<PackageVersion Include="Serilog" Version="2.10.0" />
+		<PackageVersion Include="Serilog.Extensions.Logging" Version="3.0.1" />
+		<PackageVersion Include="Serilog.Sinks.Async" Version="1.4.0" />
+		<PackageVersion Include="Serilog.Sinks.Console" Version="3.1.1" />
+		<PackageVersion Include="Serilog.Sinks.File" Version="4.1.0" />
+		<PackageVersion Include="System.ComponentModel.Annotations" Version="5.0.0" />
+		<PackageVersion Include="Volo.Abp.AspNetCore.Mvc" Version="5.3.3" />
+		<PackageVersion Include="Volo.Abp.AspNetCore.Serilog" Version="5.3.3" />
+		<PackageVersion Include="Volo.Abp.AuditLogging.Domain" Version="5.3.3" />
+		<PackageVersion Include="Volo.Abp.AuditLogging.Domain.Shared" Version="5.3.3" />
+		<PackageVersion Include="Volo.Abp.AuditLogging.EntityFrameworkCore" Version="5.3.3" />
+		<PackageVersion Include="Volo.Abp.Authorization" Version="5.3.3" />
+		<PackageVersion Include="Volo.Abp.Authorization.Abstractions" Version="5.3.3" />
+		<PackageVersion Include="Volo.Abp.Autofac" Version="5.3.3" />
+		<PackageVersion Include="Volo.Abp.AutoMapper" Version="5.3.3" />
+		<PackageVersion Include="Volo.Abp.BackgroundWorkers" Version="5.3.3" />
+		<PackageVersion Include="Volo.Abp.BlobStoring" Version="5.3.3" />
+		<PackageVersion Include="Volo.Abp.BlobStoring.Aws" Version="5.3.3" />
+		<PackageVersion Include="Volo.Abp.BlobStoring.FileSystem" Version="5.3.3" />
+		<PackageVersion Include="Volo.Abp.Core" Version="5.3.3" />
+		<PackageVersion Include="Volo.Abp.Data" Version="5.3.3" />
+		<PackageVersion Include="Volo.Abp.Ddd.Application" Version="5.3.3" />
+		<PackageVersion Include="Volo.Abp.Ddd.Application.Contracts" Version="5.3.3" />
+		<PackageVersion Include="Volo.Abp.Ddd.Domain" Version="5.3.3" />
+		<PackageVersion Include="Volo.Abp.EntityFrameworkCore" Version="5.3.3" />
+		<PackageVersion Include="Volo.Abp.EntityFrameworkCore.SqlServer" Version="5.3.3" />
+		<PackageVersion Include="Volo.Abp.Http.Client" Version="5.3.3" />
+		<PackageVersion Include="Volo.Abp.PermissionManagement.Domain" Version="5.3.3" />
+		<PackageVersion Include="Volo.Abp.PermissionManagement.EntityFrameworkCore" Version="5.3.3" />
+		<PackageVersion Include="Volo.Abp.SettingManagement.Domain" Version="5.3.3" />
+		<PackageVersion Include="Volo.Abp.SettingManagement.EntityFrameworkCore" Version="5.3.3" />
+		<PackageVersion Include="Volo.Abp.Swashbuckle" Version="5.3.3" />
+		<PackageVersion Include="Volo.Abp.TenantManagement.Domain" Version="5.3.3" />
+		<PackageVersion Include="Volo.Abp.Validation" Version="5.3.3" />
+		<PackageVersion Include="Volo.Abp.Validation.Abstractions" Version="5.3.3" />
+		<!--<PackageVersion Include="Open-XML-SDK" Version="2.9.1" />-->
+	</ItemGroup>
+	<Target Name="NoWarnOnRazorViewImportedTypeConflicts" BeforeTargets="RazorCoreCompile">
+		<PropertyGroup>
+			<NoWarn>$(NoWarn);0436</NoWarn>
+		</PropertyGroup>
+	</Target>
+</Project>
+
+
+
+

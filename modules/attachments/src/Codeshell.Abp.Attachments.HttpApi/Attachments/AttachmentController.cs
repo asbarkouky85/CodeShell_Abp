@@ -1,91 +1,125 @@
 ﻿using Codeshell.Abp.Attachments.Categories;
-using Codeshell.Abp.Files;
 using Codeshell.Abp.Files.Uploads;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace Codeshell.Abp.Attachments
 {
-    [AllowAnonymous]
     public class AttachmentController : AttachmentsControllerBase, IAttachmentFileService
     {
 
         private readonly IAttachmentFileService fileAppService;
+        private readonly IInternalAttachmentService internalAttachmentService;
 
         public AttachmentController(
-            IAttachmentFileService fileAppService
+            IAttachmentFileService fileAppService,
+            IInternalAttachmentService internalAttachmentService
             )
         {
             this.fileAppService = fileAppService;
+            this.internalAttachmentService = internalAttachmentService;
         }
 
+        public async Task<string> GetFileBase64String(Guid id)
+        {
+            return await fileAppService.GetFileBase64String(id);
+        }
 
-        public Task<FileBytes> GetBytes(Guid id) => fileAppService.GetBytes(id);
-        public Task<FileBytes> GetTempBytes(string path) => fileAppService.GetTempBytes(path);
-        public Task<TempFileDto> GetFileName(Guid id) => fileAppService.GetFileName(id);
-        public Task<FileValidationResultDto> SaveAttachment(SaveAttachmentRequest req) => fileAppService.SaveAttachment(req);
-        public Task<FileValidationResultDto> ValidateFile([FromBody] FileValidationRequest req) => fileAppService.ValidateFile(req);
-        public Task<UploadResult> Upload([FromForm] UploadRequestDto dto) => (dto.Files == null) ? UploadMultiPart(dto.AttachmentTypeId) : fileAppService.Upload(dto);
+        public async Task<UploadedFileInfoDto> GetFileName(Guid id)
+        {
+            return await fileAppService.GetFileName(id);
+        }
 
-        //[AbpAllowAnonymous]
+        public async Task<FileValidationResultDto> SaveAttachment(SaveAttachmentRequestDto req)
+        {
+            return await fileAppService.SaveAttachment(req);
+        }
+
+        public async Task<FileValidationResultDto> ValidateFile([FromBody] FileValidationRequest req)
+        {
+            return await fileAppService.ValidateFile(req);
+        }
+
+        public async Task<UploadResult> Upload([FromForm] UploadRequestDto dto)
+        {
+            return await UploadMultiPart(dto.AttachmentTypeId);
+        }
+
+        public async Task<UploadResult> UploadAndSave(UploadRequestDto req)
+        {
+            return await UploadMultiPart(req.AttachmentTypeId, true);
+        }
+
         public async Task<object> Get(Guid id)
         {
-            var f = await fileAppService.GetBytes(id);
-            return File(f.Bytes, f.MimeType);
+            var f = await internalAttachmentService.GetBytes(id);
+            return File(f.Bytes, f.MimeType, f.FileName);
         }
 
         public async Task<object> GetTemp(string path)
         {
-            var f = await fileAppService.GetTempBytes(path);
-            return File(f.Bytes, f.MimeType);
+            var f = await internalAttachmentService.GetTempBytes(path);
+            return File(f.Bytes, f.MimeType, f.FileName);
         }
 
         [Consumes("multipart/form-data")]
-        public Task<UploadResult> UploadMultiPart(int catId)
+        private async Task<UploadResult> UploadMultiPart(int catId, bool save = false)
         {
-            var req = new UploadRequestDto
-            {
-                AttachmentTypeId = catId,
-                Files = new List<FileBytes>()
-            };
-
+            var lst = new List<TempFileDto>();
             foreach (var f in Request.Form.Files)
             {
-                using MemoryStream str = new MemoryStream();
-                f.CopyTo(str);
-                var byts = new FileBytes(f.FileName, str.ToArray());
-                if (byts.MimeType.ToLower().StartsWith("image"))
+
+                using (var st = f.OpenReadStream())
                 {
-                    try
-                    {
-                        using var im = Image.FromStream(str);
-                        byts.Dimesion = new FileDimesion { Width = im.Width, Height = im.Height };
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.Message);
-                    }
 
+                    var byts = new UploadedStream(f.FileName, st);
+                    if (save)
+                    {
+                        var dto = await internalAttachmentService.UploadAndSaveFile(byts, catId);
+                        lst.Add(dto);
+                    }
+                    else
+                    {
+                        var dto = await internalAttachmentService.UploadFile(byts, catId);
+                        lst.Add(dto);
+                    }
+                    //if (byts.MimeType.ToLower().StartsWith("image"))
+                    //{
+                    //    try
+                    //    {
+
+                    //        //using var im = SKImage.From(str);
+                    //        //byts.Dimesion = new FileDimesion { Width = im.Width, Height = im.Height };
+                    //    }
+                    //    catch (Exception e)
+                    //    {
+                    //        Console.WriteLine(e.Message);
+                    //    }
+
+                    //}
                 }
-                req.Files.Add(byts);
             }
-            return fileAppService.Upload(req);
+            return new UploadResult
+            {
+                Data = lst.ToArray()
+            };
         }
 
-       
-        public Task<AttachmentCategoryDto> GetCategoryInfo(int id)
+        public async Task<AttachmentCategoryDto> GetCategoryInfo(int id)
         {
-            return fileAppService.GetCategoryInfo(id);
+            return await fileAppService.GetCategoryInfo(id);
         }
 
-        public Task<TempFileDto> ChunkUpload(ChunkUploadRequestDto dto)
+        public async Task<TempFileDto> ChunkUpload(ChunkUploadRequestDto dto)
         {
-            return fileAppService.ChunkUpload(dto);
+            return await fileAppService.ChunkUpload(dto);
+        }
+
+        public async Task<List<UploadedFileInfoDto>> GetFilesInfo(UploadedFileInfoRequestDto dto)
+        {
+            return await fileAppService.GetFilesInfo(dto);
         }
     }
 }

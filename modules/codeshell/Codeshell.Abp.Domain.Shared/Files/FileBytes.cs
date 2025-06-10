@@ -12,7 +12,7 @@ namespace Codeshell.Abp.Files
         public string MimeType { get; private set; }
         public byte[] Bytes { get; private set; }
         public string Extension { get; private set; }
-        public int? Size => Bytes?.Length;
+        public long? Size => Bytes?.Length;
         public FileDimesion Dimesion { get; set; }
 
         public void Save(string folder)

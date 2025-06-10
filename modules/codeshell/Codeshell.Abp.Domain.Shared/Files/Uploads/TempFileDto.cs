@@ -10,6 +10,7 @@ namespace Codeshell.Abp.Files.Uploads
         public string FileName { get; set; }
         public string FileTempPath { get; set; }
         public int AttachmentTypeId { get; set; }
+        public long? Size { get; set; }
         public TempFileDto()
         {
 

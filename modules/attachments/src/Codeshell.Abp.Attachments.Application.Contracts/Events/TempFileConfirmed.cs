@@ -6,6 +6,6 @@ namespace Codeshell.Abp.Attachments.Events
 {
     public class TempFileConfirmed
     {
-        public SaveAttachmentRequest SaveRequest { get; set; }
+        public SaveAttachmentRequestDto SaveRequest { get; set; }
     }
 }

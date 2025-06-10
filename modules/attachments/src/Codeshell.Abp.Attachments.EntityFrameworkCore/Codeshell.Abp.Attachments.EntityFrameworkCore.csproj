@@ -1,14 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<Import Project="..\..\..\..\common.props" />
+	
+
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<RootNamespace>Codeshell.Abp.Attachments</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Volo.Abp.EntityFrameworkCore" Version="5.3.3" />
-		<PackageReference Include="Volo.Abp.AuditLogging.EntityFrameworkCore" Version="5.3.3" />
+		<PackageReference Include="Volo.Abp.EntityFrameworkCore"/>
+		<PackageReference Include="Volo.Abp.AuditLogging.EntityFrameworkCore" />
+	</ItemGroup>
+	<ItemGroup>
 		<ProjectReference Include="..\..\..\codeshell\Codeshell.Abp.EntityFramework\Codeshell.Abp.EntityFramework.csproj" />
 		<ProjectReference Include="..\Codeshell.Abp.Attachments.Domain\Codeshell.Abp.Attachments.Domain.csproj" />
 	</ItemGroup>

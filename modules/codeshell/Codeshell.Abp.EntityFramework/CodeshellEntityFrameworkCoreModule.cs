@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Codeshell.Abp.Services;
+using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.Modularity;
@@ -17,5 +16,9 @@ namespace Codeshell.Abp
         )]
     public class CodeshellEntityFrameworkCoreModule : AbpModule
     {
+        public override void ConfigureServices(ServiceConfigurationContext context)
+        {
+            context.Services.AddTransient(typeof(ISqlCommandCapturere<>), typeof(SqlCommandCapturere<>));
+        }
     }
 }

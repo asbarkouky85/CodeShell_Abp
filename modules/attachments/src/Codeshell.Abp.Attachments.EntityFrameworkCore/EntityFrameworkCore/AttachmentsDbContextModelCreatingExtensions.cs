@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Codeshell.Abp.Extensions.EntityFramework;
+using Microsoft.EntityFrameworkCore;
 using Codeshell.Abp.Attachments.Attachments;
-using Codeshell.Abp.Attachments.Permissions;
 using System;
 using Volo.Abp;
+using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore.Modeling;
 
 namespace Codeshell.Abp.Attachments.EntityFrameworkCore
@@ -34,7 +35,7 @@ namespace Codeshell.Abp.Attachments.EntityFrameworkCore
                 entity.Property(e => e.ContainerName).HasMaxLength(60);
 
                 entity.Property(e => e.Extension).HasMaxLength(10).IsUnicode(false);
-                entity.Property(e => e.ContentType).HasMaxLength(255).IsUnicode(false);
+                entity.Property(e => e.ContentType).HasMaxLength(800).IsUnicode(false);
 
 
                 entity.HasOne(d => d.AttachmentCategory)
@@ -65,11 +66,11 @@ namespace Codeshell.Abp.Attachments.EntityFrameworkCore
                 });
 
                 entity.Property(e => e.NameEn)
-                  .HasMaxLength(50)
+                  .HasMaxLength(100)
                   .IsUnicode(false);
                 entity.Property(e => e.NameAr)
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+                    .HasMaxLength(100)
+                    .IsUnicode(true);
 
                 entity.Property(e => e.ValidExtensions).HasMaxLength(500).IsUnicode(false);
             });
@@ -110,9 +111,19 @@ namespace Codeshell.Abp.Attachments.EntityFrameworkCore
                 entity.ConfigureByConvention();
                 entity.Property(e => e.Id).ValueGeneratedNever();
                 entity.Property(e => e.FileName).HasMaxLength(200);
-                entity.Property(e => e.ContentType).HasMaxLength(60).IsUnicode(false);
+                entity.Property(e => e.ContentType).HasMaxLength(800).IsUnicode(false);
                 entity.Property(e => e.Extension).HasMaxLength(6).IsUnicode(false);
+                entity.Property(e => e.ReferenceId).HasMaxLength(255);
             });
+
+            modelBuilder.Entity<TempFileChunk>(entity =>
+            {
+                entity.ToTable(options.TablePrefix + "TempFileChunks");
+                entity.ConfigureByConvention();
+                entity.HasOne(e => e.TempFile).WithMany(d => d.Chunks).HasForeignKey(e => e.TempFileId);
+                entity.Property(e => e.ReferenceId).HasMaxLength(255);
+            });
+
         }
     }
 }

@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+	  <RootNamespace>Codeshell.Abp.Notifications</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Codeshell.Abp.Notifications.Application.Contracts\Codeshell.Abp.Notifications.Application.Contracts.csproj" />
+    <ProjectReference Include="..\Codeshell.Abp.Web\Codeshell.Abp.Web.csproj" />
+  </ItemGroup>
+
+</Project>

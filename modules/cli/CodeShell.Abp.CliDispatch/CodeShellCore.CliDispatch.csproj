@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<Import Project="..\common.props" />
+
+	<PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+	  
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CodeShellCore.Application\CodeShellCore.Application.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -12,18 +12,31 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
+using System.IO;
+using Codeshell.Abp.Data;
 
 namespace Codeshell.Abp.Extensions
 {
     public static class GeneralExtensions
     {
-        
+        public static int GetSeedOrder(this Type contributorType)
+        {
+
+            var attr = contributorType.CustomAttributes.FirstOrDefault(e => e.AttributeType == typeof(SeedOrderAttribute));
+            if (attr != null)
+            {
+                var val = (SeedOrderAttribute)attr.Constructor.Invoke(attr.ConstructorArguments.Select(e => e.Value).ToArray());
+                return val.Order;
+            }
+            return int.MaxValue;
+        }
 
         // public static void ApplyChanges<TEntity,TDto>(this IRepository<TEntity> repo,IEnumerable<TDto> dtos,)
         public static async Task SeedData(this IServiceProvider provider, Guid? tenantId = null, ILogger logger = null)
         {
             var seedContributorTypes = provider.GetRequiredService<IOptions<AbpDataSeedOptions>>().Value
-                                    .Contributors;
+                                    .Contributors
+                                    .OrderBy(e => e.GetSeedOrder());
 
             foreach (var seedContributorType in seedContributorTypes)
             {
@@ -42,23 +55,32 @@ namespace Codeshell.Abp.Extensions
             return (string)asem.ConstructorArguments.FirstOrDefault().Value;
         }
 
-        public static string GetManehModuleName(this Assembly assembly)
+        public static string GetMessageAndStack(this Exception ex, bool ignorInvocationException = true)
         {
-            return assembly.GetName().Name.Split(".")[1];
+
+            var result = ex.GetMessageRecursive(ignorInvocationException);
+            result += ex.StackTrace;
+            return result;
         }
 
-        public static string GetMessageRecursive(this Exception ex)
+        public static string GetMessageRecursive(this Exception ex, bool ignorInvocationException = true)
         {
-            string mes = ex.Message;
-            if (ex.Data.Contains("Message"))
+
+            if (((ex is TargetInvocationException) || (ex is AggregateException)) && ignorInvocationException)
             {
-                mes += " [RemoteServiceError] -> " + ex.Data["Message"];
+                if (ex.InnerException != null)
+                    return ex.InnerException.GetMessageRecursive();
+                return "";
             }
-            if (ex.InnerException != null)
+            else
             {
-                mes += " > " + ex.InnerException.GetMessageRecursive();
+                string message = " (" + ex.GetType().Name + ")  " + ex.Message;
+                if (ex.InnerException != null)
+                    message += " >> " + ex.InnerException.GetMessageRecursive(ignorInvocationException);
+                return message;
             }
-            return mes;
+
+
         }
 
         public static List<T> MapTo<T>(this IEnumerable lst, bool ignoreId = true, IEnumerable<string> ignore = null) where T : class
@@ -123,7 +145,7 @@ namespace Codeshell.Abp.Extensions
 
         public static Type RealType(this Type type)
         {
-            if (type.IsNullable())
+            if (type.IsGenericType && type.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
                 return type.GetGenericArguments()[0];
             return type;
         }
@@ -160,17 +182,16 @@ namespace Codeshell.Abp.Extensions
             return type.Equals(typeof(decimal)) || type.Equals(typeof(double)) || type.Equals(typeof(float));
         }
 
-        public static bool IsManehDevelopmentEnvironment(this string name)
-        {
-            var envs = new[] { "Development", "local", "local-db", "test-server", "test-server-auth" };
-            return envs.Contains(name);
-        }
-
         public static bool IsIntgerType(this Type type, bool includeNullable = false)
         {
             if (includeNullable)
                 type = type.RealType();
             return type.Equals(typeof(sbyte)) || type.Equals(typeof(byte)) || type.Equals(typeof(int)) || type.Equals(typeof(long)) || type.Equals(typeof(uint)) || type.Equals(typeof(ulong));
+        }
+
+        public static bool IsNumericType(this Type type, bool includeNullable = true)
+        {
+            return type.IsDecimalType(includeNullable) || type.IsDecimalType(includeNullable) || type.IsDecimalType(includeNullable);
         }
 
         public static DateTime GetDayStart(this DateTime date)
@@ -221,6 +242,33 @@ namespace Codeshell.Abp.Extensions
                 config.AddJsonFile($"appsettings.{env}.json", optional: true);
             });
             return builder;
+        }
+
+        public static bool EmbeddedResourceKeyExists(this Assembly assembly, string key)
+        {
+            var resourceNames = assembly.GetManifestResourceNames();
+            return resourceNames.Any(e => e.Contains(key));
+        }
+
+        public static Stream GetEmbeddedResourceStream(this Assembly assembly, string key)
+        {
+            var resourceNames = assembly.GetManifestResourceNames();
+            var resourceWithName = resourceNames.FirstOrDefault(e => e.Contains(key));
+            if (resourceWithName != null)
+            {
+                return assembly.GetManifestResourceStream(resourceWithName);
+            }
+            throw new Exception($"Could not find '{key}'");
+        }
+
+        public static byte[] GetEmbeddedResourceBytes(this Assembly assembly, string key)
+        {
+            using (var resStream = assembly.GetEmbeddedResourceStream(key))
+            {
+                var st = new MemoryStream();
+                resStream.CopyTo(st);
+                return st.ToArray();
+            }
         }
 
     }

@@ -1,14 +1,11 @@
-﻿using Codeshell.Abp.Attachments.Attachments;
+﻿using Codeshell.Abp.Attachments.BlobStoring;
 using Codeshell.Abp.Attachments.Categories;
-using Codeshell.Abp.Attachments.Paths;
 using Codeshell.Abp.Files;
 using Codeshell.Abp.Files.Uploads;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Options;
 using System;
-using System.Buffers.Text;
 using System.Collections.Generic;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -18,31 +15,34 @@ using Volo.Abp.Authorization;
 using Volo.Abp.BlobStoring;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Repositories;
+using Volo.Abp.Validation;
+using Codeshell.Abp.Attachments.Extensions;
 
 namespace Codeshell.Abp.Attachments
 {
-    [ExposeServices(typeof(IAttachmentFileService), typeof(IInternalAttachmentAppService))]
-    public class AttachmentFileService : AttachmentsAppService, IAttachmentFileService, IInternalAttachmentAppService
+    [ExposeServices(typeof(IAttachmentFileService), typeof(IInternalAttachmentService))]
+    public class AttachmentFileService : AttachmentsAppService, IAttachmentFileService, IInternalAttachmentService
     {
-
         private readonly IAttachmentCategoryRepository _categories;
         private readonly IBlobContainerFactory _containerFactory;
-        private readonly IRepository<TempFile, Guid> _tmpRepo;
-        private bool _authorize = true;
+        private readonly ITempFileRepository _tmpRepo;
+        protected IChunkUploaderFactory ChunkUploaderFactory => LazyServiceProvider.LazyGetRequiredService<IChunkUploaderFactory>();
+        private IRepository<TempFileChunk, Guid> ChunkRepo => LazyServiceProvider.LazyGetRequiredService<IRepository<TempFileChunk, Guid>>();
 
-        private IPathProvider PathProvider => LazyServiceProvider.LazyGetRequiredService<IPathProvider>();
-        private IAttachmentRepository Repository => LazyServiceProvider.LazyGetRequiredService<IAttachmentRepository>();
+        protected AttachmentsModuleOptions Options { get; private set; }
+        private IAttachmentRepository Repository => LazyServiceProvider.LazyGetService<IAttachmentRepository>();
+        private IAttachmentDomainService DomainService => LazyServiceProvider.LazyGetService<IAttachmentDomainService>();
 
         public AttachmentFileService(
             IAttachmentCategoryRepository categories,
-            IRepository<TempFile, Guid> tmpRepo,
+            IOptions<AttachmentsModuleOptions> _options,
+            ITempFileRepository tmpRepo,
             IBlobContainerFactory containerFactory)
         {
-            // _paths = paths;
             _tmpRepo = tmpRepo;
             _categories = categories;
             _containerFactory = containerFactory;
-            //_authorize = false;
+            Options = _options.Value;
         }
 
         public async Task<AttachmentCategoryDto> GetCategoryInfo(int id)
@@ -52,14 +52,87 @@ namespace Codeshell.Abp.Attachments
             return ObjectMapper.Map(cat, new AttachmentCategoryDto());
         }
 
-        public async Task<TempFileDto> GetFileName(Guid id)
+        public async Task<UploadedFileInfoDto> GetFileName(Guid id)
         {
-            string name = await Repository.GetFileName(id);
-            if (name == null)
+            UploadedFileInfo inf = await Repository.GetInfo(id);
+            if (inf == null)
             {
-                throw new UserFriendlyException("not found");
+                return new UploadedFileInfoDto
+                {
+                    Id = id,
+                    FileName = "(N/A)"
+                };
             }
-            return new TempFileDto { FileName = name };
+            return ObjectMapper.Map(inf, new UploadedFileInfoDto());
+        }
+
+        public async Task<List<UploadedFileInfoDto>> GetFilesInfo(UploadedFileInfoRequestDto dto)
+        {
+            var data = await Repository.GetInfo(dto.Ids);
+            return ObjectMapper.Map(data, new List<UploadedFileInfoDto>());
+        }
+
+        public virtual async Task<TempFileDto> ChunkUpload(ChunkUploadRequestDto dto)
+        {
+            var cat = await _categories.FindAsync(dto.AttachmentTypeId);
+            var chunkUploader = ChunkUploaderFactory.Create(cat.ContainerName ?? "default");
+            TempFile tmp;
+            if (!dto.Id.HasValue)
+            {
+                ValidateFiles(dto.AttachmentTypeId, cat, new[] { dto });
+                dto.Id = DomainUtils.NewGuid();
+                tmp = new TempFile(dto.Id.Value, dto.AttachmentTypeId, dto.FileName, dto.TotalChunkCount);
+                var blobName = chunkUploader.NormalizeName(cat.GenerateBlobName(tmp));
+                tmp.SetFullPath(blobName);
+                tmp.SetFileSize(dto.Size);
+                string referenceId = null;
+                if (!Options.Mock)
+                    referenceId = await chunkUploader.StartFile(tmp.FullPath);
+                else
+                    referenceId = Utils.RandomAlphaNumeric(20, CharType.Small);
+
+                tmp.SetRefernceId(referenceId);
+                await _tmpRepo.InsertAsync(tmp);
+            }
+            else
+            {
+                tmp = await _tmpRepo.FindAsync(dto.Id.Value);
+            }
+
+            var tmpDto = new TempFileDto
+            {
+                FileName = dto.FileName,
+                AttachmentTypeId = dto.AttachmentTypeId,
+                Id = dto.Id.Value,
+                FileTempPath = tmp.FullPath
+            };
+
+            var bytes = Convert.FromBase64String(dto.Chunk);
+
+            string chunkReference = null;
+
+            if (!Options.Mock)
+                chunkReference = await chunkUploader.UploadPart(tmp.FullPath, tmp.ReferenceId, dto.CurrentChunkIndex, bytes);
+            else
+                chunkReference = Utils.RandomAlphaNumeric(20, CharType.Small);
+
+            var addedChunk = new TempFileChunk(dto.Id.Value, dto.CurrentChunkIndex, chunkReference);
+
+            await ChunkRepo.InsertAsync(addedChunk);
+            await CurrentUnitOfWork.SaveChangesAsync();
+
+            var complete = await _tmpRepo.IsChunksComplete(dto.Id.Value);
+
+            if (complete)
+            {
+                var temp = await _tmpRepo.GetWithChunks(dto.Id.Value);
+                var chunkData = temp.Chunks.ToDictionary(e => e.ChunkIndex, e => e.ReferenceId);
+                if (!Options.Mock)
+                    await chunkUploader.Finish(temp.FullPath, tmp.ReferenceId, chunkData);
+
+            }
+
+            return tmpDto;
         }
 
         public async Task<FileBytes> GetBytes(Guid id)
@@ -71,210 +144,146 @@ namespace Codeshell.Abp.Attachments
             {
                 throw new UserFriendlyException("not found");
             }
-            if (att.BinaryAttachmentId != null)
+            var file = await DomainService.GetFile(att);
+            if (file == null)
             {
-                AttachmentBinary s = await Repository.GetBinaryAttachment(id);
-                return new FileBytes(att.FileName, s.Bytes);
+                throw new UserFriendlyException(L["MSG__Not_found_on_provider"]);
             }
-            else
-            {
-                var c = _containerFactory.GetContainer(att.ContainerName);
-                var b = await c.GetAllBytesOrNullAsync(att.FullPath);
-                if (b == null)
-                {
-                    throw new UserFriendlyException(L["MSG__Not_found_on_provider"]);
-                }
-                var f = new FileBytes(att.FileName, b);
-                return f;
-            }
+            return file;
+        }
+
+        public async Task<string> GetFileBase64String(Guid id)
+        {
+            await AuthorizeDownload(id);
+
+            var att = await Repository.GetAsync(e => e.Id == id, true);
+
+            if (att == null)
+                throw new UserFriendlyException("not found");
+
+            var fileBytes = await DomainService.GetFile(att);
+            if (fileBytes == null)
+                throw new UserFriendlyException(L["MSG__Not_found_on_provider"]);
+
+            var fileBase64String = Convert.ToBase64String(fileBytes.Bytes);
+            return $"data:image/{fileBytes.MimeType};base64,{fileBase64String}";
         }
 
         public async Task<FileBytes> GetTempBytes(string path)
         {
             if (Guid.TryParse(path, out Guid id))
             {
-                var c = _containerFactory.GetTempContainer();
-                var tmpFile = await _tmpRepo.FirstOrDefaultAsync(e => e.Id == id);
+                var tmpFile = await _tmpRepo.GetWithCategory(id);
                 if (tmpFile == null)
                 {
                     throw new UserFriendlyException("not found");
                 }
-                var str = await c.GetAllBytesAsync(tmpFile.GetBlobName());
-                var b = new FileBytes(tmpFile.FileName, str);
-                return b;
+                var c = _containerFactory.GetContainer(tmpFile.AttachmentCategory.ContainerName);
+                await AuthorizeDownloadByCategory(tmpFile.AttachmentCategoryId);
+                byte[] str = new byte[0];
+                if (!Options.Mock)
+                {
+                    str = await c.GetAllBytesOrNullAsync(tmpFile.FullPath);
+                }
+
+                return new FileBytes(tmpFile.FileName, str);
             }
             throw new UserFriendlyException("not found");
         }
 
-        public async Task SaveAttachmentsByPhysicalPath(Dictionary<Guid, string> files, int attachmentTypeId)
+        public virtual async Task<FileValidationResultDto> SaveAttachment(SaveAttachmentRequestDto req)
         {
-            var cat = await _categories.FindAsync(attachmentTypeId);
+            if (req.Id == null)
+                throw new AbpValidationException("Id is required");
 
-            foreach (var file in files)
-            {
-                var tmpBytes = new FileBytes(file.Value);
-                var att = new Attachment(file.Key, tmpBytes.FileName, attachmentTypeId, cat.ContainerName);
-                IBlobContainer cont = _containerFactory.GetContainer(cat.ContainerName);
-
-                var blobName = Utils.CombineUrl(cat.FolderPath ?? cat.Id.ToString(), att.Id.ToString() + tmpBytes.Extension);
-                att.SetBlobName(blobName);
-
-                await cont.SaveAsync(blobName, tmpBytes.Bytes);
-                await Repository.InsertAsync(att);
-            }
-        }
-
-        public async Task<FileValidationResultDto> SaveAttachment(SaveAttachmentRequest req)
-        {
-            var cat = await _categories.FindAsync(req.AttachmentTypeId);
-
-            var tmpFile = await _tmpRepo.FirstOrDefaultAsync(e => e.Id == req.Id);
+            var tmpFile = await _tmpRepo.GetWithCategory(req.Id.Value);
             if (tmpFile == null)
             {
                 return new FileValidationResultDto { Message = L.GetString("MSG_file_is_not_in_tmp", req.FileName) };
             }
-
-            var tmpContainer = _containerFactory.GetTempContainer();
-            var tmpBytes = await tmpContainer.GetAllBytesOrNullAsync(tmpFile.GetBlobName());
-
-            var dto = new FileBytes(tmpFile.FileName, tmpBytes);
-
-            ValidateFiles(cat, new[] { dto });
-
-            var att = new Attachment(req.Id ?? DomainUtils.NewGuid(), req.FileName, req.AttachmentTypeId, cat.ContainerName);
-            IBlobContainer cont = _containerFactory.GetContainer(cat.ContainerName);
-
-            var blobName = Utils.CombineUrl(cat.FolderPath ?? cat.Id.ToString(), att.Id.ToString() + dto.Extension);
-            att.SetBlobName(blobName);
-
-            await cont.SaveAsync(blobName, dto.Bytes);
-            await Repository.InsertAsync(att);
-
-            await tmpContainer.DeleteAsync(tmpFile.GetBlobName());
-            await _tmpRepo.DeleteAsync(tmpFile);
-
+            
             return new FileValidationResultDto { Code = "0", Message = "Success" };
         }
 
-        public async Task<TempFileDto> ChunkUpload(ChunkUploadRequestDto dto)
+        [DisableValidation]
+        public async Task<TempFileDto> UploadFile(UploadedStream stream, int attachmentTypeId)
         {
-            if (!dto.Id.HasValue)
+            var cat = await _categories.FindAsync(attachmentTypeId);
+            ValidateFiles(attachmentTypeId, cat, new[] { stream });
+            if (!MagicNumbersData.ValidateMagic(stream.Extension, stream.Stream))
             {
-                var cat = await _categories.FindAsync(dto.AttachmentTypeId);
-                ValidateFiles(cat, new[] { dto });
-                dto.Id = DomainUtils.NewGuid();
+                throw new UserFriendlyException(L.GetString("MSG__Content_does_not_match_a_{0}_file", stream.Extension));
             }
+            var id = DomainUtils.NewGuid();
+            var tmp = new TempFile(id, cat.Id, stream.FileName);
+            var blobName = cat.GenerateBlobName(tmp);
+            tmp.SetFullPath(blobName);
+            tmp.SetFileSize(stream.Size);
 
-            TempFile tmp = null;
-            tmp = new TempFile(dto.Id.Value, dto.FileName);
-
-            var blobName = tmp.GetBlobName();
+            var tmContainer = _containerFactory.GetContainer(cat.ContainerName);
+            if (!Options.Mock)
+                await tmContainer.SaveAsync(blobName, stream.Stream);
 
             var tmpDto = new TempFileDto
             {
-                FileTempPath = blobName,
-                FileName = dto.FileName,
-                AttachmentTypeId = dto.AttachmentTypeId,
-                Id = tmp.Id
+                FileTempPath = tmp.FullPath,
+                FileName = stream.FileName,
+                AttachmentTypeId = cat.Id,
+                Id = id,
+                Size = stream.Size
             };
 
-            var path = await PathProvider.GetTempFolderPath();
-            var filePath = Path.Combine(path, blobName);
-            var bytes = Convert.FromBase64String(dto.Chunk);
-            if (!File.Exists(filePath))
-            {
-                if (dto.CurrentChunkIndex > 0)
-                {
-                    throw new UserFriendlyException("FileDoesNotExists", "FileDoesNotExists");
-                }
-                Utils.CreateFolderForFile(filePath);
-                File.WriteAllBytes(filePath, bytes);
-            }
-            else
-            {
-                using (var file = new FileStream(filePath, FileMode.Append))
-                {
-                    foreach (var b in bytes)
-                    {
-                        file.WriteByte(b);
-                    }
-                }
-            }
-
-            if (dto.CurrentChunkIndex >= (dto.TotalChunkCount - 1))
-            {
-                var tmContainer = _containerFactory.GetTempContainer();
-                await tmContainer.SaveAsync(blobName, File.ReadAllBytes(filePath));
-                await _tmpRepo.InsertAsync(tmp);
-            }
-
+            await _tmpRepo.InsertAsync(tmp);
             return tmpDto;
         }
 
-        public async Task<UploadResult> Upload(UploadRequestDto dto)
+        [DisableValidation]
+        public async Task<TempFileDto> UploadAndSaveFile(UploadedStream stream, int attachmentTypeId)
         {
-            var cat = await _categories.FindAsync(dto.AttachmentTypeId);
-            ValidateFiles(cat, dto.Files);
-
-            List<TempFileDto> lst = new List<TempFileDto>();
-            var tmContainer = _containerFactory.GetTempContainer();
-
-            foreach (var d in dto.Files)
+            var cat = await _categories.FindAsync(attachmentTypeId);
+            ValidateFiles(attachmentTypeId, cat, new[] { stream });
+            if (!MagicNumbersData.ValidateMagic(stream.Extension, stream.Stream))
             {
-                if (!MagicNumbersData.ValidateMagic(d.Extension, d.Bytes))
-                {
-                    throw new UserFriendlyException(L.GetString("MSG__Content_does_not_match_a_{0}_file", d.Extension));
-                }
-                var id = DomainUtils.NewGuid();
-                var tmp = new TempFile(id, d.FileName);
-                var blobName = tmp.GetBlobName();
-                await tmContainer.SaveAsync(blobName, d.Bytes);
-                var tmpDto = new TempFileDto
-                {
-                    FileTempPath = blobName,
-                    FileName = d.FileName,
-                    AttachmentTypeId = dto.AttachmentTypeId,
-                    Id = id
-                };
-
-                lst.Add(tmpDto);
-                await _tmpRepo.InsertAsync(tmp);
+                throw new UserFriendlyException(L.GetString("MSG__Content_does_not_match_a_{0}_file", stream.Extension));
             }
-            return new UploadResult
+            var id = DomainUtils.NewGuid();
+            var att = new Attachment(Guid.NewGuid(), stream.FileName, attachmentTypeId, cat.ContainerName);
+            var blobName = cat.GenerateBlobName(att);
+            att.SetBlobName(blobName);
+            att.SetSize(stream.Size);
+
+            var tmContainer = _containerFactory.GetContainer(cat.ContainerName);
+            if (!Options.Mock)
+                await tmContainer.SaveAsync(blobName, stream.Stream);
+            var tmpDto = new TempFileDto
             {
-                Data = lst.ToArray()
+                FileTempPath = att.FullPath,
+                FileName = stream.FileName,
+                AttachmentTypeId = cat.Id,
+                Id = id,
+                Size = stream.Size
             };
-        }
 
-        public Task<UploadResult> Upload()
-        {
-
-            throw new NotImplementedException();
+            await Repository.InsertAsync(att);
+            return tmpDto;
         }
 
         public async Task<FileValidationResultDto> ValidateFile(FileValidationRequest req)
         {
             var res = new FileValidationResultDto();
             var cat = await _categories.FindAsync(req.AttachmentType);
-            if (cat == null)
-            {
-                res.Message = L.GetString("MSG_unknown_category", req.AttachmentType);
-                res.Code = "1";
-                return res;
-            }
-            ValidateFiles(cat, new[] { req });
-
+            ValidateFiles(req.AttachmentType, cat, new[] { req });
             return res;
         }
 
         private string GetCategoryName(AttachmentCategory cat)
         {
-            return CurrentCulture.Lang == "ar" ? (cat.NameAr ?? cat.NameEn) : cat.NameEn;// L["AttachmentTypes_" + ((AttachmentTypes)cat.Id).ToString()];
+            return CurrentCulture.Lang == "ar" ? cat.NameAr : cat.NameEn;
         }
 
         private void AuthorizeUpload(AttachmentCategory cat)
         {
-            if (!_authorize)
+            if (!Options.Authorize)
                 return;
             if (!CurrentUser.IsAuthenticated)
             {
@@ -290,7 +299,7 @@ namespace Codeshell.Abp.Attachments
 
         private async Task AuthorizeDownload(Guid attachmentId)
         {
-            if (!_authorize)
+            if (!Options.Authorize)
                 return;
             if (CurrentUser == null || !CurrentUser.IsAuthenticated)
             {
@@ -308,22 +317,40 @@ namespace Codeshell.Abp.Attachments
             }
         }
 
+        private async Task AuthorizeDownloadByCategory(int attachmentCategoryId)
+        {
+            if (!Options.Authorize)
+                return;
+            if (CurrentUser == null || !CurrentUser.IsAuthenticated)
+            {
+                if (!await _categories.AnonymousDownloadAllowed(attachmentCategoryId))
+                {
+                    throw new AbpAuthorizationException(L["MSG__Unauthorized_download"]);
+                }
+            }
+            else
+            {
+                if (!await _categories.DownloadAllowed(CurrentUser.Roles, attachmentCategoryId))
+                {
+                    throw new AbpAuthorizationException(L["MSG__Unauthorized_download"]);
+                }
+            }
+        }
+
         private bool HasDoubleExtension(string fileName)
         {
-            var regex = new Regex("\\.");
+            var regex = new Regex("\\.", RegexOptions.IgnoreCase, new TimeSpan(0, 0, 2));
 
             var coll = regex.Matches(fileName);
             return coll.Count > 1;
         }
 
-        private void ValidateFiles(AttachmentCategory cat, IEnumerable<IFileInfo> lst)
+        private void ValidateFiles(int id, AttachmentCategory cat, IEnumerable<IFileInfo> lst)
         {
-
-
 
             if (cat == null)
             {
-                throw new UserFriendlyException(L.GetString("MSG_unknown_category", ""));
+                throw new UserFriendlyException(L.GetString("MSG_unknown_category", id));
             }
 
             AuthorizeUpload(cat);
@@ -342,9 +369,8 @@ namespace Codeshell.Abp.Attachments
                 if (!cat.ValidateFile(d, out ValidationResult res))
                 {
                     var pars = new List<object> { GetCategoryName(cat) };
-                    pars.AddRange(res.Parameters?.Select(e => e).ToArray());
 
-                    throw new UserFriendlyException(L.GetString(res.Message, pars.ToArray()));
+                    throw new UserFriendlyException(L.GetString(res.ErrorMessage, pars.ToArray()));
                 }
             }
         }

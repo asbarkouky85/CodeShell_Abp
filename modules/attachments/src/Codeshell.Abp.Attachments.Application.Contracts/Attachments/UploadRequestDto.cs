@@ -9,7 +9,7 @@ namespace Codeshell.Abp.Attachments
     public class UploadRequestDto
     {
         public int AttachmentTypeId { get; set; }
-        public IList<FileBytes> Files { get; set; }
+        //public IList<UploadedStream> Files { get; set; }
         
 
     }
