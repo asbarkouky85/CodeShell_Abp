@@ -1,19 +1,17 @@
-﻿using System;
+﻿using Codeshell.Abp.Seed;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
-using Codeshell.Abp.Extensions;
-using Microsoft.Extensions.Options;
 using Volo.Abp.Data;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Configuration;
-using System.IO;
-using Codeshell.Abp.Data;
 
 namespace Codeshell.Abp.Extensions
 {
@@ -78,6 +76,37 @@ namespace Codeshell.Abp.Extensions
                 if (ex.InnerException != null)
                     message += " >> " + ex.InnerException.GetMessageRecursive(ignorInvocationException);
                 return message;
+            }
+
+
+        }
+
+        public static string[] GetStackTrace(this Exception ex, bool recurse = false, bool ignorInvocationException = true)
+        {
+
+            if (((ex is TargetInvocationException) || (ex is AggregateException)) && ignorInvocationException)
+            {
+                if (ex.InnerException != null)
+                    return ex.InnerException.GetStackTrace();
+                return new string[] { };
+            }
+            else if (recurse)
+            {
+                List<string> message = ex.StackTrace.Split('\r', '\n').Where(d => d.Length > 0).ToList();
+                if (ex.InnerException != null)
+                {
+                    var inner = ex.InnerException.GetStackTrace(recurse, ignorInvocationException);
+
+                    message.Add("-------");
+                    message.Add("");
+                    message.AddRange(inner);
+                }
+
+                return message.ToArray();
+            }
+            else
+            {
+                return ex.StackTrace.Split('\r', '\n').Where(d => d.Length > 0).ToArray();
             }
 
 

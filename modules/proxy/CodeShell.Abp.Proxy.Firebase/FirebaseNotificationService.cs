@@ -1,19 +1,22 @@
-﻿using System;
+﻿using Codeshell.Abp.Http;
+using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using CodeShellCore.Integration.Firebase.Flutter;
-using CodeShellCore.Integration.Firebase.Results;
-using Microsoft.Extensions.Options;
+using Codeshell.Abp.Integration.Firebase;
+using Codeshell.Abp.Integration.Firebase.Flutter;
+using Codeshell.Abp.Integration.Firebase.Results;
 
-namespace CodeShellCore.Http.Pushing
+namespace Codeshell.Abp.Integration.Firebase
 {
     public class FirebaseNotificationService : HttpService, IFirebaseNotificationService
     {
-        protected override string BaseUrl => Configuration.ServerUrl ?? "https://fcm.googleapis.com/fcm";
+
         private FirebaseOptions Configuration;
 
         public FirebaseNotificationService(IOptions<FirebaseOptions> options)
         {
+            BaseUrl = Configuration.ServerUrl ?? "https://fcm.googleapis.com/fcm";
             Configuration = options.Value;
             Headers["Authorization"] = "key=" + Configuration.ApiKey;
             if (Configuration.SenderId != null)
@@ -26,7 +29,7 @@ namespace CodeShellCore.Http.Pushing
 
             try
             {
-                res = await PostAsAsync<FirebasePushResult>("send", request);
+                res = await PostAsyncAs<FirebasePushResult>("send", request);
             }
             catch (Exception ex)
             {
@@ -42,7 +45,7 @@ namespace CodeShellCore.Http.Pushing
 
             try
             {
-                res = await PostAsAsync<FirebasePushResult>("send", data);
+                res = await PostAsyncAs<FirebasePushResult>("send", data);
             }
             catch (Exception ex)
             {
@@ -75,7 +78,7 @@ namespace CodeShellCore.Http.Pushing
 
             try
             {
-                res = await PostAsAsync<FirebasePushResult>("send", req);
+                res = await PostAsyncAs<FirebasePushResult>("send", req);
             }
             catch (Exception ex)
             {

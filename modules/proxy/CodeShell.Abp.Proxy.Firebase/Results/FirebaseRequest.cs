@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using CodeShellCore.Http.Pushing;
+using Codeshell.Abp.Integration.Firebase;
 
-namespace CodeShellCore.Integration.Firebase.Results
+namespace Codeshell.Abp.Integration.Firebase.Results
 {
     public class FirebaseRequest
     {

@@ -1,7 +1,7 @@
 ﻿using Codeshell.Abp.Extensions;
 using Newtonsoft.Json.Linq;
 
-namespace Codeshell.Abp.Extensions.Json
+namespace Codeshell.Abp.Extensions
 {
     public static class JsonExtensions
     {

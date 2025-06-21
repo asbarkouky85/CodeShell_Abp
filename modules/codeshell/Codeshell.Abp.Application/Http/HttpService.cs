@@ -20,7 +20,7 @@ namespace Codeshell.Abp.Http
     public class HttpService : ApplicationService, IHttpService
     {
         private HttpClient Client;
-        public string BaseUrl { get; set; } = "";
+        public virtual string BaseUrl { get; set; } = "";
         protected virtual object AppendToQuery { get; set; }
 
         private Dictionary<string, string> _headers;

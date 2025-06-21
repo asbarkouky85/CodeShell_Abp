@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CodeShellCore.Http.Pushing
+namespace Codeshell.Abp.Integration.Firebase
 {
     public class FirebaseOptions
     {

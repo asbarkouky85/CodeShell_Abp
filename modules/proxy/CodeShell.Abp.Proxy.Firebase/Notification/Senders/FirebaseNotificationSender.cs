@@ -1,21 +1,20 @@
-﻿using CodeShellCore.Http.Pushing;
-using CodeShellCore.Integration.Firebase.Results;
-using CodeShellCore.Services;
+﻿using Codeshell.Abp.Extensions;
+using Codeshell.Abp.Notifications;
+using Codeshell.Abp.Notifications.Senders;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Volo.Abp.Application.Services;
+using Codeshell.Abp.Integration.Firebase;
+using Codeshell.Abp.Integration.Firebase.Results;
 
-namespace CodeShellCore.Notifications.Senders
+namespace Codeshell.Abp.Integration.Firebase.Notification.Senders
 {
     public class FirebaseNotificationSender : ApplicationService, INotificationSender
     {
-        IFirebaseNotificationService Service => Store.GetService<FirebaseNotificationService>();
+        IFirebaseNotificationService Service => LazyServiceProvider.LazyGetService<FirebaseNotificationService>();
 
         public NotificationProviders ProviderId => NotificationProviders.FireBase;
-
-        public FirebaseNotificationSender(IServiceProvider provider) : base(provider)
-        {
-        }
 
         public async Task<MessageDeliveryResult> SendAsync(NotificationMessageDeliveryDto deliveryData)
         {

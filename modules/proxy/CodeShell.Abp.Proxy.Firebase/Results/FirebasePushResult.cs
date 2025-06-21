@@ -1,9 +1,8 @@
-﻿using CodeShellCore.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using Codeshell.Abp.Integration.Firebase.Results;
+using Codeshell.Abp.Results;
 
-namespace CodeShellCore.Integration.Firebase.Results
+namespace Codeshell.Abp.Integration.Firebase.Results
 {
     public class FirebasePushResult : Result
     {

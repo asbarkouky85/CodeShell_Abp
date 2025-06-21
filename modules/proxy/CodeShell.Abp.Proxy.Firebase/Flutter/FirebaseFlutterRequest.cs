@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace CodeShellCore.Integration.Firebase.Flutter
+namespace Codeshell.Abp.Integration.Firebase.Flutter
 {
     public class FirebaseFlutterRequest
     {

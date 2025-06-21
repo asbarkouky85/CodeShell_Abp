@@ -1,4 +1,4 @@
-﻿namespace CodeShellCore.Http.Pushing
+﻿namespace Codeshell.Abp.Integration.Firebase
 {
     public class FirebaseMessage {
         public string body { get; set; }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CodeShellCore.Integration.Firebase
+namespace Codeshell.Abp.Integration.Firebase
 {
     public static class FirebaseConstants
     {

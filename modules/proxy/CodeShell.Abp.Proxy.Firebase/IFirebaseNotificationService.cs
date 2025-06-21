@@ -1,8 +1,9 @@
 ﻿using System.Threading.Tasks;
-using CodeShellCore.Integration.Firebase.Flutter;
-using CodeShellCore.Integration.Firebase.Results;
+using Codeshell.Abp.Integration.Firebase;
+using Codeshell.Abp.Integration.Firebase.Flutter;
+using Codeshell.Abp.Integration.Firebase.Results;
 
-namespace CodeShellCore.Http.Pushing
+namespace Codeshell.Abp.Integration.Firebase
 {
     public interface IFirebaseNotificationService
     {

@@ -1,4 +1,4 @@
-﻿namespace CodeShellCore.Integration.Firebase.Results
+﻿namespace Codeshell.Abp.Integration.Firebase.Results
 {
     public class FirebaseResultItem
     {

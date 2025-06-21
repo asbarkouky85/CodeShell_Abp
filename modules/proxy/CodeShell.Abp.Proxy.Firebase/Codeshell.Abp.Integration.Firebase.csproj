@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CodeShellCore.Application\CodeShellCore.Application.csproj" />
+    <ProjectReference Include="..\..\codeshell\Codeshell.Abp.Application\Codeshell.Abp.Application.csproj" />
   </ItemGroup>
 
 </Project>

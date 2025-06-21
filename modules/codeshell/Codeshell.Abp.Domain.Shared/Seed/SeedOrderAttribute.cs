@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Codeshell.Abp.Data
+namespace Codeshell.Abp.Seed
 {
     public class SeedOrderAttribute : Attribute
     {
