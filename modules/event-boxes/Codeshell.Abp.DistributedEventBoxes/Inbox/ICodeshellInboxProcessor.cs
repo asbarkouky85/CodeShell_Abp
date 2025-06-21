@@ -7,9 +7,8 @@ using Volo.Abp.DependencyInjection;
 
 namespace Codeshell.Abp.DistributedEventBoxes.Inbox
 {
-    public interface IThiqahEventInbox : ITransientDependency
+    public interface ICodeshellInboxProcessor : ITransientDependency
     {
-        Task UpdateRetries(Guid id, int retries, string exception);
-
+        Task Process();
     }
 }

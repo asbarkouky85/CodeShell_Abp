@@ -14,7 +14,7 @@ using Codeshell.Abp.DistributedEventBoxes.Outbox;
 
 namespace Codeshell.Abp.DistributedEventBoxes
 {
-    public static class ThiqahDistributedBoxExtensions
+    public static class CodeshellDistributedBoxExtensions
     {
         public static int GetRetryCount(this IncomingEventRecord inf)
         {
@@ -63,7 +63,7 @@ namespace Codeshell.Abp.DistributedEventBoxes
 
         public static void ConfigureInboxOutbox<TContext>(this IServiceCollection services, IConfiguration configuration, bool outbox = true, bool inbox = true) where TContext : DbContext, IHasEventInbox, IHasEventOutbox
         {
-            var conf = configuration.GetSection(DistributedBoxConstants.ConfigurationKey).Get<ThiqahEventInboxOptions>() ?? new ThiqahEventInboxOptions();
+            var conf = configuration.GetSection(DistributedBoxConstants.ConfigurationKey).Get<CodeshellEventInboxOptions>() ?? new CodeshellEventInboxOptions();
             if (conf.Enable)
             {
                 var name = typeof(TContext).Name;
@@ -97,8 +97,8 @@ namespace Codeshell.Abp.DistributedEventBoxes
                     }
                 });
             }
-            services.AddTransient(typeof(IThiqahEventInbox), typeof(ThiqahDbContextEventInbox<TContext>));
-            services.AddTransient(typeof(IDbContextEventOutbox<>), typeof(ThiqahDbContextEventOutbox<>));
+            services.AddTransient(typeof(ICodeshellEventInbox), typeof(CodeshellDbContextEventInbox<TContext>));
+            services.AddTransient(typeof(IDbContextEventOutbox<>), typeof(CodeshellDbContextEventOutbox<>));
         }
     }
 }

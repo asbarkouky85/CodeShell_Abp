@@ -7,7 +7,7 @@ using Codeshell.Abp.DistributedEventBoxes.DistributedLock;
 
 namespace Codeshell.Abp.DistributedEventBoxes
 {
-    public class ThiqahEventInboxOptions
+    public class CodeshellEventInboxOptions
     {
         public int ParallelThreadCount { get; set; } = 3;
         public bool ShowConsoleLogs { get; set; } = false;

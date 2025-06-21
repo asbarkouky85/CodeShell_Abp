@@ -20,7 +20,7 @@ using Codeshell.Abp.DistributedEventBoxes.Outbox;
 namespace Codeshell.Abp.DistributedEventBoxes.Outbox;
 
 [ExposeServices(typeof(IOutboxSender))]
-public class ThiqahOutboxSender : IOutboxSender, ITransientDependency, IThiqahOutboxSender
+public class CodeshellOutboxSender : IOutboxSender, ITransientDependency, ICodeshellOutboxSender
 {
     protected IServiceProvider ServiceProvider { get; }
     protected AbpAsyncTimer Timer { get; }
@@ -29,21 +29,21 @@ public class ThiqahOutboxSender : IOutboxSender, ITransientDependency, IThiqahOu
     protected IEventOutbox Outbox { get; private set; }
     protected OutboxConfig OutboxConfig { get; private set; }
     protected AbpEventBusBoxesOptions EventBusBoxesOptions { get; }
-    protected ThiqahEventInboxOptions ManehOptions;
+    protected CodeshellEventInboxOptions CodeshellOptions;
     protected string DistributedLockName => "AbpOutbox_" + OutboxConfig.Name;
-    public ILogger<ThiqahOutboxSender> Logger { get; set; }
+    public ILogger<CodeshellOutboxSender> Logger { get; set; }
 
     protected CancellationTokenSource StoppingTokenSource { get; }
     protected CancellationToken StoppingToken { get; }
-    bool _showLogs = true;
+
     private readonly IUnitOfWorkManager UnitOfWorkManager;
     IEventBoxLogger CLogger;
-    public ThiqahOutboxSender(
+    public CodeshellOutboxSender(
         IServiceProvider serviceProvider,
         AbpAsyncTimer timer,
         IDistributedEventBus distributedEventBus,
         IAbpDistributedLock distributedLock,
-        IOptions<ThiqahEventInboxOptions> manehOptions,
+        IOptions<CodeshellEventInboxOptions> codeshellOptions,
         IEventBoxLogger consoleLogger, 
        IOptions<AbpEventBusBoxesOptions> eventBusBoxesOptions)
     {
@@ -51,11 +51,11 @@ public class ThiqahOutboxSender : IOutboxSender, ITransientDependency, IThiqahOu
         DistributedEventBus = distributedEventBus;
         DistributedLock = distributedLock;
         EventBusBoxesOptions = eventBusBoxesOptions.Value;
-        ManehOptions = manehOptions.Value;
+        CodeshellOptions = codeshellOptions.Value;
         Timer = timer;
-        Timer.Period = Convert.ToInt32(ManehOptions.PeriodTimeSpan.TotalMilliseconds);
+        Timer.Period = Convert.ToInt32(CodeshellOptions.PeriodTimeSpan.TotalMilliseconds);
         Timer.Elapsed += TimerOnElapsed;
-        Logger = NullLogger<ThiqahOutboxSender>.Instance;
+        Logger = NullLogger<CodeshellOutboxSender>.Instance;
         StoppingTokenSource = new CancellationTokenSource();
         StoppingToken = StoppingTokenSource.Token;
         UnitOfWorkManager = serviceProvider.GetRequiredService<IUnitOfWorkManager>();

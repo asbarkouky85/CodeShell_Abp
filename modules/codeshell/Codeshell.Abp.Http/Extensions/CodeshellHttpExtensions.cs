@@ -1,14 +1,15 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Codeshell.Abp.Emitters;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
@@ -17,15 +18,9 @@ using System.ComponentModel;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using Volo.Abp;
-using Volo.Abp.Data;
 using Volo.Abp.Modularity;
 using Volo.Abp.Threading;
 using Volo.Abp.VirtualFileSystem;
-using Microsoft.AspNetCore.SignalR;
-using Codeshell.Abp.Emitters;
-using Microsoft.AspNetCore.Server.Kestrel.Https;
-using System.Runtime.ConstrainedExecution;
-using Codeshell.Abp.Extensions;
 
 namespace Codeshell.Abp.Extensions
 {
@@ -70,7 +65,7 @@ namespace Codeshell.Abp.Extensions
             if (File.Exists(lSettings))
             {
                 var data = File.ReadAllText(lSettings);
-                var obj = (JObject?)JsonConvert.DeserializeObject(data);
+                var obj = (JObject)JsonConvert.DeserializeObject(data);
                 var httpUrl = obj.GetPathAsString("iisSettings:iisExpress:applicationUrl");
                 var httpPortString = httpUrl?.GetAfterLast(":")?.Replace("/", "");
                 var httpsPortString = obj.GetPathAsString("iisSettings:iisExpress:sslPort");
@@ -134,7 +129,7 @@ namespace Codeshell.Abp.Extensions
             return builder;
         }
 
-        public static void ConfigureManehCors(this ServiceConfigurationContext context, IConfiguration configuration, string policyName)
+        public static void ConfigureCodeshellCors(this ServiceConfigurationContext context, IConfiguration configuration, string policyName)
         {
             context.Services.AddCors(options =>
             {
@@ -171,7 +166,7 @@ namespace Codeshell.Abp.Extensions
             });
         }
 
-        public static void ConfigureManehSwagger<T>(this ServiceConfigurationContext context, IConfiguration configuration)
+        public static void ConfigureCodeshellSwagger<T>(this ServiceConfigurationContext context, IConfiguration configuration)
         {
             var apiName = typeof(T).Assembly.GetName().Name?.Replace(".Host", "");
             var title = apiName.GetAfterLast(".");
@@ -217,7 +212,7 @@ namespace Codeshell.Abp.Extensions
             return context.GetValue("SeedOnStartup", false);
         }
 
-        public static void ConfigureManehAuthentication(this ServiceConfigurationContext context, IConfiguration configuration)
+        public static void ConfigureCodeshellAuthentication(this ServiceConfigurationContext context, IConfiguration configuration)
         {
             context.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, e =>
@@ -263,7 +258,7 @@ namespace Codeshell.Abp.Extensions
 
         public static ActionResult GetAssemblyInfo(this Controller cont)
         {
-            string? assemblyName = cont.GetType().Assembly.GetName().Name;
+            string assemblyName = cont.GetType().Assembly.GetName().Name;
             string ver = cont.GetType().Assembly.GetVersionString();
             cont.Response.ContentType = "text/html";
             return cont.Content("<head><title>" + assemblyName + "</title></head><h1>" + assemblyName + "</h1><h2>Version : " + ver + "</h2>");

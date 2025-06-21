@@ -3,12 +3,12 @@
 	
 
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<RootNamespace>Codeshell.Abp.Attachments</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Volo.Abp.AspNetCore.Mvc" />
+
 		<ProjectReference Include="..\..\..\codeshell\Codeshell.Abp.Http\Codeshell.Abp.Http.csproj" />
 		<ProjectReference Include="..\Codeshell.Abp.Attachments.Application.Contracts\Codeshell.Abp.Attachments.Application.Contracts.csproj" />
 	</ItemGroup>

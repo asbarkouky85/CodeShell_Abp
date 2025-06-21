@@ -27,7 +27,7 @@ namespace Codeshell.Abp.DistributedEventBoxes
         typeof(AbpDistributedLockingModule),
         typeof(AbpEntityFrameworkCoreModule)
         )]
-    public class ThiqahDistributedEventBoxesModule : AbpModule
+    public class CodeshellDistributedEventBoxesModule : AbpModule
     {
 
         public override void ConfigureServices(ServiceConfigurationContext context)
@@ -42,16 +42,16 @@ namespace Codeshell.Abp.DistributedEventBoxes
                 
             });
 
-            context.Services.AddTransient(typeof(IDbContextEventInbox<>), typeof(ThiqahDbContextEventInbox<>));
+            context.Services.AddTransient(typeof(IDbContextEventInbox<>), typeof(CodeshellDbContextEventInbox<>));
 
-            context.Services.AddOptions<ThiqahEventInboxOptions>(DistributedBoxConstants.ConfigurationKey);
-            context.Services.Configure<ThiqahEventInboxOptions>(configuration.GetSection(DistributedBoxConstants.ConfigurationKey));
+            context.Services.AddOptions<CodeshellEventInboxOptions>(DistributedBoxConstants.ConfigurationKey);
+            context.Services.Configure<CodeshellEventInboxOptions>(configuration.GetSection(DistributedBoxConstants.ConfigurationKey));
 
             context.Services.AddSingleton<IDistributedLockProvider>(sp =>
             {
-                //var opts = sp.GetRequiredService<IOptions<ThiqahEventInboxOptions>>().Value;
+                //var opts = sp.GetRequiredService<IOptions<CodeshellEventInboxOptions>>().Value;
                 var conf = sp.GetRequiredService<IConfiguration>();
-                var opts = conf.GetSection(DistributedBoxConstants.ConfigurationKey).Get<ThiqahEventInboxOptions>() ?? new ThiqahEventInboxOptions();
+                var opts = conf.GetSection(DistributedBoxConstants.ConfigurationKey).Get<CodeshellEventInboxOptions>() ?? new CodeshellEventInboxOptions();
 
                 switch (opts.LockType)
                 {

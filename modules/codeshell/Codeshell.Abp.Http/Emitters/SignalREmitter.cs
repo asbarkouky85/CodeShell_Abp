@@ -13,7 +13,7 @@ namespace Codeshell.Abp.Emitters
             Context = con;
         }
 
-        public virtual void Emit(Func<TContract, Task> action, string[]? only = null, string[]? exclude = null)
+        public virtual void Emit(Func<TContract, Task> action, string[] only = null, string[] exclude = null)
         {
             var cl = Context.Clients.All;
 

@@ -1,6 +1,6 @@
 ﻿namespace Codeshell.Abp.DistributedEventBoxes.RabbitMq
 {
-    public interface IThiqahRabbitMqMessageConsumer
+    public interface ICodeshellRabbitMqMessageConsumer
     {
         void InitializeQueue(bool quorum = false);
     }

@@ -10,11 +10,11 @@ using Volo.Abp.RabbitMQ;
 namespace Codeshell.Abp.DistributedEventBoxes.Bus;
 
 [ExposeServices(typeof(IRabbitMqSerializer))]
-public class ManehRabbitMqSerializer : IRabbitMqSerializer, ITransientDependency
+public class CodeshellRabbitMqSerializer : IRabbitMqSerializer, ITransientDependency
 {
     private readonly IJsonSerializer _jsonSerializer;
     private readonly bool EventInboxOutboxEnabled;
-    public ManehRabbitMqSerializer(IJsonSerializer jsonSerializer, IConfiguration context)
+    public CodeshellRabbitMqSerializer(IJsonSerializer jsonSerializer, IConfiguration context)
     {
         _jsonSerializer = jsonSerializer;
         var eventInboxOutboxSection = context.GetSection("EventInboxOutbox");

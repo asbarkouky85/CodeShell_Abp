@@ -18,14 +18,14 @@ using Codeshell.Abp.DistributedEventBoxes.Inbox;
 
 namespace Codeshell.Abp.DistributedEventBoxes.Inbox
 {
-    [ExposeServices(typeof(IDbContextEventInbox<>), typeof(IThiqahEventInbox))]
-    public class ThiqahDbContextEventInbox<TDbContext> : DbContextEventInbox<TDbContext>, IThiqahEventInbox where TDbContext : IHasEventInbox
+    [ExposeServices(typeof(IDbContextEventInbox<>), typeof(ICodeshellEventInbox))]
+    public class CodeshellDbContextEventInbox<TDbContext> : DbContextEventInbox<TDbContext>, ICodeshellEventInbox where TDbContext : IHasEventInbox
     {
-        private readonly ThiqahEventInboxOptions options;
+        private readonly CodeshellEventInboxOptions options;
 
-        public ThiqahDbContextEventInbox(
+        public CodeshellDbContextEventInbox(
             IDbContextProvider<TDbContext> dbContextProvider,
-            IOptions<ThiqahEventInboxOptions> options,
+            IOptions<CodeshellEventInboxOptions> options,
             IClock clock,
             IOptions<AbpEventBusBoxesOptions> eventBusBoxesOptions) : base(dbContextProvider, clock, eventBusBoxesOptions)
         {

@@ -21,11 +21,11 @@ using Volo.Abp.RabbitMQ;
 
 namespace Codeshell.Abp.DistributedEventBoxes.Inbox;
 
-[ExposeServices(typeof(IInboxProcessor), typeof(IThiqahInboxProcessor))]
-public class ThiqahInboxProcessor : IInboxProcessor, IThiqahInboxProcessor, ITransientDependency
+[ExposeServices(typeof(IInboxProcessor), typeof(ICodeshellInboxProcessor))]
+public class CodeshellInboxProcessor : IInboxProcessor, ICodeshellInboxProcessor, ITransientDependency
 {
     private readonly IRabbitMqSerializer serializer;
-    private readonly ThiqahEventInboxOptions ManehOptions;
+    private readonly CodeshellEventInboxOptions CodeshellOptions;
 
     protected IServiceProvider ServiceProvider { get; }
     protected AbpAsyncTimer Timer { get; }
@@ -40,21 +40,21 @@ public class ThiqahInboxProcessor : IInboxProcessor, IThiqahInboxProcessor, ITra
     protected DateTime? LastCleanTime { get; set; }
 
     protected string DistributedLockName => "AbpInbox_" + InboxConfig.Name;
-    public ILogger<ThiqahInboxProcessor> Logger { get; set; }
+    public ILogger<CodeshellInboxProcessor> Logger { get; set; }
     protected CancellationTokenSource StoppingTokenSource { get; }
     protected CancellationToken StoppingToken { get; }
     IEventBoxLogger CLogger { get; set; }
 
-    public ThiqahInboxProcessor(
+    public CodeshellInboxProcessor(
         IServiceProvider serviceProvider,
         AbpAsyncTimer timer,
         IDistributedEventBus distributedEventBus,
         IAbpDistributedLock distributedLock,
         IUnitOfWorkManager unitOfWorkManager,
         IClock clock,
-        ILogger<ThiqahInboxProcessor> logger,
+        ILogger<CodeshellInboxProcessor> logger,
         IRabbitMqSerializer serializer, IEventBoxLogger consoleLogger,
-        IOptions<ThiqahEventInboxOptions> manehOptions,
+        IOptions<CodeshellEventInboxOptions> codeshellOptions,
         IOptions<AbpEventBusBoxesOptions> eventBusBoxesOptions)
     {
         ServiceProvider = serviceProvider;
@@ -63,9 +63,9 @@ public class ThiqahInboxProcessor : IInboxProcessor, IThiqahInboxProcessor, ITra
         DistributedLock = distributedLock;
         UnitOfWorkManager = unitOfWorkManager;
         Clock = clock;
-        ManehOptions = manehOptions.Value;
+        CodeshellOptions = codeshellOptions.Value;
         EventBusBoxesOptions = eventBusBoxesOptions.Value;
-        Timer.Period = Convert.ToInt32(ManehOptions.PeriodTimeSpan.TotalMilliseconds);
+        Timer.Period = Convert.ToInt32(CodeshellOptions.PeriodTimeSpan.TotalMilliseconds);
         Timer.Elapsed += TimerOnElapsed;
         Logger = logger;
         this.serializer = serializer;
@@ -125,8 +125,8 @@ public class ThiqahInboxProcessor : IInboxProcessor, IThiqahInboxProcessor, ITra
             CLogger.Log("FAILED : \t", waitingEvent.EventData);
             using (var uow2 = UnitOfWorkManager.Begin(isTransactional: true, requiresNew: true))
             {
-                var mInbox = ServiceProvider.GetRequiredService<IThiqahEventInbox>();
-                if (retries >= ManehOptions.MaxRetryCount)
+                var mInbox = ServiceProvider.GetRequiredService<ICodeshellEventInbox>();
+                if (retries >= CodeshellOptions.MaxRetryCount)
                 {
                     Logger.LogInformation("Recycling retries ");
                     await mInbox.UpdateRetries(waitingEvent.Id, 1, ex.Message);
@@ -172,7 +172,7 @@ public class ThiqahInboxProcessor : IInboxProcessor, IThiqahInboxProcessor, ITra
                         }
 
                         CLogger.Log($"Found {waitingEvents.Count} events in the inbox.");
-                        if (ManehOptions.ParallelHandling)
+                        if (CodeshellOptions.ParallelHandling)
                         {
                             await HandleParallelly(waitingEvents);
                         }

@@ -16,12 +16,12 @@ using Codeshell.Abp.DistributedEventBoxes.Inbox;
 namespace Codeshell.Abp.DistributedEventBoxes.Outbox
 {
     [ExposeServices(typeof(DbContextEventOutbox<>), typeof(IDbContextEventOutbox<>))]
-    public class ThiqahDbContextEventOutbox<TDbContext> : DbContextEventOutbox<TDbContext> where TDbContext : IHasEventOutbox
+    public class CodeshellDbContextEventOutbox<TDbContext> : DbContextEventOutbox<TDbContext> where TDbContext : IHasEventOutbox
     {
 
         private readonly IUnitOfWorkManager manager;
         IEventBoxLogger CLogger;
-        public ThiqahDbContextEventOutbox(
+        public CodeshellDbContextEventOutbox(
             IDbContextProvider<TDbContext> dbContextProvider,
             IEventBoxLogger consoleLogger,
             IUnitOfWorkManager manager) : base(dbContextProvider)

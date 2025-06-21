@@ -12,9 +12,9 @@ using Volo.Abp.RabbitMQ;
 namespace Codeshell.Abp.DistributedEventBoxes.RabbitMq
 {
     [ExposeServices(typeof(RabbitMqMessageConsumer))]
-    public class ThiqahRabbitMqMessageConsumer : RabbitMqMessageConsumer, IThiqahRabbitMqMessageConsumer
+    public class CodeshellRabbitMqMessageConsumer : RabbitMqMessageConsumer, ICodeshellRabbitMqMessageConsumer
     {
-        public ThiqahRabbitMqMessageConsumer(IConnectionPool connectionPool, AbpAsyncTimer timer, IExceptionNotifier exceptionNotifier) : base(connectionPool, timer, exceptionNotifier)
+        public CodeshellRabbitMqMessageConsumer(IConnectionPool connectionPool, AbpAsyncTimer timer, IExceptionNotifier exceptionNotifier) : base(connectionPool, timer, exceptionNotifier)
         {
 
         }

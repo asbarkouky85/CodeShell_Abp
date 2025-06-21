@@ -22,7 +22,7 @@ namespace Codeshell.Abp.Razor
             _tempDataProvider = tmp;
         }
 
-        public async Task<string> RenderViewAsync(HttpContext context, string viewName, object? model = null, Dictionary<string, object>? viewData = null)
+        public async Task<string> RenderViewAsync(HttpContext context, string viewName, object model = null, Dictionary<string, object> viewData = null)
         {
             ActionContext actionContext = new ActionContext(context, new RouteData(), new ActionDescriptor());
             using (var sw = new StringWriter())
@@ -62,7 +62,7 @@ namespace Codeshell.Abp.Razor
             }
         }
 
-        public async Task<string?> RenderPageAsync(HttpContext context, string pageName, string layout, object? model = null, Dictionary<string, object>? viewData = null)
+        public async Task<string> RenderPageAsync(HttpContext context, string pageName, string layout, object model = null, Dictionary<string, object> viewData = null)
         {
             ActionContext actionContext = new ActionContext(context, new RouteData(), new ActionDescriptor());
 

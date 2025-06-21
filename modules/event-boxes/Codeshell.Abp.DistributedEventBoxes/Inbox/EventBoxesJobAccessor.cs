@@ -48,14 +48,14 @@ namespace Codeshell.Abp.DistributedEventBoxes.Inbox
 
                 try
                 {
-                var outboxSenderManager = provider.GetService<OutboxSenderManager>();
-                if (outboxSenderManager != null)
-                {
-                    var prop = typeof(OutboxSenderManager).GetProperty("Senders", BindingFlags.Instance | BindingFlags.NonPublic);
-                    procs = (List<IOutboxSender>)prop.GetValue(outboxSenderManager);
+                    var outboxSenderManager = provider.GetService<OutboxSenderManager>();
+                    if (outboxSenderManager != null)
+                    {
+                        var prop = typeof(OutboxSenderManager).GetProperty("Senders", BindingFlags.Instance | BindingFlags.NonPublic);
+                        procs = (List<IOutboxSender>)prop.GetValue(outboxSenderManager);
+                    }
                 }
-                }
-                catch (Exception ex)
+                catch
                 {
 
                 }
@@ -69,9 +69,9 @@ namespace Codeshell.Abp.DistributedEventBoxes.Inbox
             var procs = Processors;
             foreach (var proc in procs)
             {
-                if (proc.GetType().GetInterfaces().Contains(typeof(IThiqahInboxProcessor)))
+                if (proc.GetType().GetInterfaces().Contains(typeof(ICodeshellInboxProcessor)))
                 {
-                    await ((IThiqahInboxProcessor)proc).Process();
+                    await ((ICodeshellInboxProcessor)proc).Process();
                 }
             }
         }
@@ -82,10 +82,10 @@ namespace Codeshell.Abp.DistributedEventBoxes.Inbox
             CLogger.Log($"RUNNING SENDERS {procs.Count}");
             foreach (var proc in procs)
             {
-                if (proc.GetType().GetInterfaces().Contains(typeof(IThiqahOutboxSender)))
+                if (proc.GetType().GetInterfaces().Contains(typeof(ICodeshellOutboxSender)))
                 {
                     CLogger.Log($"INVOKE: {proc.GetType().Name}");
-                    await ((IThiqahOutboxSender)proc).SendEvents();
+                    await ((ICodeshellOutboxSender)proc).SendEvents();
                 }
             }
         }

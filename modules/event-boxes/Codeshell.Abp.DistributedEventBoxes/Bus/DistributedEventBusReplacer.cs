@@ -72,9 +72,9 @@ namespace Codeshell.Abp.DistributedEventBoxes.Bus
 
         protected override void SubscribeHandlers(ITypeList<IEventHandler> handlers)
         {
-            if (Consumer.GetType().GetInterfaces().Contains(typeof(IThiqahRabbitMqMessageConsumer)))
+            if (Consumer.GetType().GetInterfaces().Contains(typeof(ICodeshellRabbitMqMessageConsumer)))
             {
-                ((IThiqahRabbitMqMessageConsumer)Consumer).InitializeQueue(queueType == "Quorum");
+                ((ICodeshellRabbitMqMessageConsumer)Consumer).InitializeQueue(queueType == "Quorum");
             }
 
             Consumer.OnMessageReceived(ProcessEventAsync);
@@ -137,10 +137,10 @@ namespace Codeshell.Abp.DistributedEventBoxes.Bus
             }
             foreach (var proc in procs)
             {
-                if (proc.GetType().GetInterfaces().Contains(typeof(IThiqahInboxProcessor)))
+                if (proc.GetType().GetInterfaces().Contains(typeof(ICodeshellInboxProcessor)))
                 {
                     CLogger.Log($"Calling Processor : {proc.GetType().Name}");
-                    await ((IThiqahInboxProcessor)proc).Process();
+                    await ((ICodeshellInboxProcessor)proc).Process();
                 }
             }
         }

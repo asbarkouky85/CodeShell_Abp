@@ -12,7 +12,7 @@ namespace Codeshell.Abp.DistributedEventBoxes
         public bool Disable { get; set; }
         protected string LoggerId;
         protected bool ShowLogs { get; set; }
-        public EventBoxLogger(IOptions<ThiqahEventInboxOptions> opts)
+        public EventBoxLogger(IOptions<CodeshellEventInboxOptions> opts)
         {
             ShowLogs = opts.Value.ShowConsoleLogs;
         }

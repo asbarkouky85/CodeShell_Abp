@@ -2,7 +2,7 @@
 
 namespace Codeshell.Abp.DistributedEventBoxes.Outbox
 {
-    public interface IThiqahOutboxSender
+    public interface ICodeshellOutboxSender
     {
         Task SendEvents();
     }
