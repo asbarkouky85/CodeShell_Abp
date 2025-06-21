@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
-using CodeShellCore.Text;
+using Codeshell.Abp.Text;
 
 namespace CodeShellCore.Integration.Twilio.Http
 {

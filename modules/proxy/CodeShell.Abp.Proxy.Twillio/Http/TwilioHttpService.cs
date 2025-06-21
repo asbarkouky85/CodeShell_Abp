@@ -1,5 +1,5 @@
-﻿using CodeShellCore.Http;
-using CodeShellCore.Text;
+﻿using Codeshell.Abp.Http;
+using Codeshell.Abp.Text;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -7,18 +7,18 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using CodeShellCore.Integration.Twilio;
+using CodeShellCore.Integration.Twilio.Http;
 
 namespace CodeShellCore.Integration.Twilio.Http
 {
     public class TwilioHttpService : HttpService, ITwilioHttpService
     {
-        private string _baseURl;
-        protected override string BaseUrl => _baseURl;
         protected TwilioOptions Options { get; }
 
         public TwilioHttpService(IOptions<TwilioOptions> options)
         {
-            _baseURl = options.Value.Url;
+            BaseUrl = options.Value.Url;
             Options = options.Value;
         }
 

@@ -68,6 +68,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Importation", "Importation"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codeshell.Abp.Integration.Firebase", "modules\proxy\CodeShell.Abp.Proxy.Firebase\Codeshell.Abp.Integration.Firebase.csproj", "{E139F42D-BE78-6AC9-833D-AF234DD6FB37}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeShellCore.Integration.Twilio", "modules\proxy\CodeShell.Abp.Proxy.Twillio\CodeShellCore.Integration.Twilio.csproj", "{4BCB5DAF-7C98-FEB1-1E1B-BAB590DE26D3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -166,6 +168,10 @@ Global
 		{E139F42D-BE78-6AC9-833D-AF234DD6FB37}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E139F42D-BE78-6AC9-833D-AF234DD6FB37}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E139F42D-BE78-6AC9-833D-AF234DD6FB37}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BCB5DAF-7C98-FEB1-1E1B-BAB590DE26D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BCB5DAF-7C98-FEB1-1E1B-BAB590DE26D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BCB5DAF-7C98-FEB1-1E1B-BAB590DE26D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BCB5DAF-7C98-FEB1-1E1B-BAB590DE26D3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -199,6 +205,7 @@ Global
 		{FC82BA89-2AAF-4913-AA15-DBDBEB62ACC9} = {FD729B8A-7F16-4420-A28A-C3D797979DDE}
 		{992D3DB6-622D-4ED8-9754-7DB5E327065F} = {FD729B8A-7F16-4420-A28A-C3D797979DDE}
 		{E139F42D-BE78-6AC9-833D-AF234DD6FB37} = {FACC05A1-C666-4683-A85C-F3ADCFF1FC81}
+		{4BCB5DAF-7C98-FEB1-1E1B-BAB590DE26D3} = {FACC05A1-C666-4683-A85C-F3ADCFF1FC81}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C59926E8-EA5E-42C2-8509-2F2785627F23}

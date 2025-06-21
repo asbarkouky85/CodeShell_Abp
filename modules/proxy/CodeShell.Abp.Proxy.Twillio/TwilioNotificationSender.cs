@@ -1,10 +1,8 @@
-﻿using CodeShellCore.Files;
-using CodeShellCore.Integration.Twilio.Extensions;
-using CodeShellCore.Integration.Twilio.Http;
-using CodeShellCore.Notifications;
-using CodeShellCore.Notifications.Senders;
-using CodeShellCore.Services;
-using CodeShellCore.Text;
+﻿using Codeshell.Abp.Files;
+using Codeshell.Abp.Notifications;
+using Codeshell.Abp.Notifications.Senders;
+using Codeshell.Abp.Services;
+using Codeshell.Abp.Text;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -12,6 +10,9 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using CodeShellCore.Integration.Twilio;
+using CodeShellCore.Integration.Twilio.Extensions;
+using CodeShellCore.Integration.Twilio.Http;
 
 namespace CodeShellCore.Integration.Twilio
 {

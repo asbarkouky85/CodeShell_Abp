@@ -1,4 +1,5 @@
-﻿namespace CodeShellCore.Integration.Twilio.Http
+﻿using CodeShellCore.Integration.Twilio.Http;
+namespace CodeShellCore.Integration.Twilio.Http
 {
     public class TwilioResultDto
     {
