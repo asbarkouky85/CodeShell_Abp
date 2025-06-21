@@ -2,11 +2,11 @@
 
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
-		<RootNamespace>CodeShellCore.HealthCheck</RootNamespace>
+		<RootNamespace>Codeshell.Abp.HealthCheck</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\CodeShellCore.Domain\CodeShellCore.Domain.csproj" />
+		<ProjectReference Include="..\..\codeshell\Codeshell.Abp.Domain\Codeshell.Abp.Domain.csproj" />
 	</ItemGroup>
 
 </Project>

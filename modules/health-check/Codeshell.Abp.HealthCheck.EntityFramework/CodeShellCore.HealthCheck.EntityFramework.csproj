@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<RootNamespace>Codeshell.Abp.HealthCheck</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\codeshell\Codeshell.Abp.EntityFramework\Codeshell.Abp.EntityFramework.csproj" />
+		<ProjectReference Include="..\Codeshell.Abp.HealthCheck.Domain\Codeshell.Abp.HealthCheck.Domain.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design"  />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools"  />
+	</ItemGroup>
+
+</Project>

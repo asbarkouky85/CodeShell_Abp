@@ -43,9 +43,9 @@ namespace Codeshell.Abp.Http
             };
         }
 
-        public HttpService()
+        public HttpService(string baseURl = null)
         {
-
+            BaseUrl = baseURl;
         }
 
         protected virtual Uri AppendQuery(Uri uri, object obj)
@@ -281,6 +281,11 @@ namespace Codeshell.Abp.Http
         {
             var res = await ExecuteGetAsync(url, query);
             return await ToJsonAsync(res);
+        }
+
+        public async Task<HttpResponseMessage> GetResponseAsync(string url, object query = null)
+        {
+            return await ExecuteGetAsync(url, query);
         }
 
         public async Task<string> GetAsyncAsString(string url, object query = null)

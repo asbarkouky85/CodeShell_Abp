@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Volo.Abp.Domain.Entities.Auditing;
 
-namespace CodeShellCore.HealthCheck
+namespace Codeshell.Abp.HealthCheck
 {
-    public class CheckItem : ChangeColumnsEntity<long>
+    public class CheckItem : AuditedEntity<long>
     {
         static Dictionary<string, Guid?> _eventByService = new Dictionary<string, Guid?>();
         public CheckItem() { }

@@ -1,15 +1,10 @@
-﻿using CodeShellCore.EntityFramework;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.EntityFrameworkCore;
 
-namespace CodeShellCore.HealthCheck
+namespace Codeshell.Abp.HealthCheck
 {
-    public class HealthCheckDbContext : CodeShellDbContext<HealthCheckDbContext>
+    public class HealthCheckDbContext : CodeshellDbContext<HealthCheckDbContext>
     {
         public DbSet<CheckItem> CheckItems { get; set; }
-        protected override string ConnectionStringKey => "HealthChecker";
 
         public HealthCheckDbContext(DbContextOptions<HealthCheckDbContext> opts) : base(opts)
         {

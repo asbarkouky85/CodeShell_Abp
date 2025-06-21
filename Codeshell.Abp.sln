@@ -78,6 +78,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EventBoxes", "EventBoxes", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codeshell.Abp.DistributedEventBoxes", "modules\event-boxes\Codeshell.Abp.DistributedEventBoxes\Codeshell.Abp.DistributedEventBoxes.csproj", "{5A632C69-7E2F-6D9A-FAE5-D42C13631D03}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HealthChecker", "HealthChecker", "{DC0A8C4D-212C-4238-861A-19847B479AA9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codeshell.Abp.HealthCheck.Domain", "modules\health-check\Codeshell.Abp.HealthCheck.Domain\Codeshell.Abp.HealthCheck.Domain.csproj", "{74A6A5AD-C422-2EF1-2A24-B3327755F9D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeShellCore.HealthCheck.EntityFramework", "modules\health-check\Codeshell.Abp.HealthCheck.EntityFramework\CodeShellCore.HealthCheck.EntityFramework.csproj", "{09D042A7-6D2C-4AAF-A135-176CE3EA8EA1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codeshell.Abp.HealthCheck.Application", "modules\health-check\Codeshell.Abp.HealthCheck.Application\Codeshell.Abp.HealthCheck.Application.csproj", "{015B5309-5F01-47EA-B724-DADC08368A15}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -188,6 +196,18 @@ Global
 		{5A632C69-7E2F-6D9A-FAE5-D42C13631D03}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A632C69-7E2F-6D9A-FAE5-D42C13631D03}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A632C69-7E2F-6D9A-FAE5-D42C13631D03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74A6A5AD-C422-2EF1-2A24-B3327755F9D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74A6A5AD-C422-2EF1-2A24-B3327755F9D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74A6A5AD-C422-2EF1-2A24-B3327755F9D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74A6A5AD-C422-2EF1-2A24-B3327755F9D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09D042A7-6D2C-4AAF-A135-176CE3EA8EA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09D042A7-6D2C-4AAF-A135-176CE3EA8EA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09D042A7-6D2C-4AAF-A135-176CE3EA8EA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09D042A7-6D2C-4AAF-A135-176CE3EA8EA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{015B5309-5F01-47EA-B724-DADC08368A15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{015B5309-5F01-47EA-B724-DADC08368A15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{015B5309-5F01-47EA-B724-DADC08368A15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{015B5309-5F01-47EA-B724-DADC08368A15}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -225,6 +245,10 @@ Global
 		{8BBE8658-61D6-4D1D-7131-2C05FF7F9BA5} = {992D3DB6-622D-4ED8-9754-7DB5E327065F}
 		{ADB7DF33-D534-4AAB-B641-239E83C22F31} = {FD729B8A-7F16-4420-A28A-C3D797979DDE}
 		{5A632C69-7E2F-6D9A-FAE5-D42C13631D03} = {ADB7DF33-D534-4AAB-B641-239E83C22F31}
+		{DC0A8C4D-212C-4238-861A-19847B479AA9} = {FD729B8A-7F16-4420-A28A-C3D797979DDE}
+		{74A6A5AD-C422-2EF1-2A24-B3327755F9D6} = {DC0A8C4D-212C-4238-861A-19847B479AA9}
+		{09D042A7-6D2C-4AAF-A135-176CE3EA8EA1} = {DC0A8C4D-212C-4238-861A-19847B479AA9}
+		{015B5309-5F01-47EA-B724-DADC08368A15} = {DC0A8C4D-212C-4238-861A-19847B479AA9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C59926E8-EA5E-42C2-8509-2F2785627F23}
