@@ -6,7 +6,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Codeshell.Abp.EntityFramework\Codeshell.Abp.EntityFramework.csproj" />
+	  <ProjectReference Include="..\..\codeshell\Codeshell.Abp.EntityFramework\Codeshell.Abp.EntityFramework.csproj" />
 	  <ProjectReference Include="..\Codeshell.Abp.Notifications.Domain\Codeshell.Abp.Notifications.Domain.csproj" />
 	</ItemGroup>
 

@@ -1,12 +1,12 @@
-﻿using Codeshell.Abp.Data.Helpers;
-using Codeshell.Abp.Linq;
-using Codeshell.Abp.Web.Filters;
+﻿using Codeshell.Abp.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Volo.Abp.Application.Dtos;
 
 namespace Codeshell.Abp.Notifications
 {
-    [ApiAuthorize(AllowAnonymous = true)]
+
     public class NotificationsController : NotificationsBaseController, INotificationsListService
     {
         readonly INotificationsListService service;
@@ -16,29 +16,26 @@ namespace Codeshell.Abp.Notifications
             this.service = service;
         }
 
-        [ApiAuthorize(AllowAnonymous = false)]
-        public async Task<PagedResult<NotificationListDto>> GetByUser(PagedListRequestDto opts)
+        public async Task<PagedResultDto<NotificationListDto>> GetByUser(CodeshellPagedRequestDto opts)
         {
             return await service.GetByUser(opts);
 
         }
 
         [HttpGet]
-        [ApiAuthorize(AllowAnonymous = false)]
         public Task<int> CountByUser()
         {
             return service.CountByUser();
         }
 
         [HttpPut]
-        [ApiAuthorize(AllowAnonymous = false)]
-        public Task<SubmitResult> ChangeStatus(NotificationReadStatusDto dto)
+        public async Task ChangeStatus(NotificationReadStatusDto dto)
         {
-            return service.ChangeStatus(dto);
+            await service.ChangeStatus(dto);
         }
 
         [HttpGet]
-        [ApiAuthorize(AllowAnonymous = true)]
+        [AllowAnonymous]
         public async Task Test()
         {
             await service.Test();

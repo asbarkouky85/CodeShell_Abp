@@ -1,31 +1,30 @@
-﻿using Codeshell.Abp.Data.EntityFramework;
-using Codeshell.Abp.Notifications;
-using Codeshell.Abp.Notifications.Devices;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Volo.Abp.Domain.Repositories.EntityFrameworkCore;
+using Volo.Abp.EntityFrameworkCore;
 
-namespace Codeshell.Abp.EntityFrameworkCore.Devices
+namespace Codeshell.Abp.Notifications.Devices
 {
-    public class UserDeviceRepository<TContext> : KeyRepository<UserDevice, TContext, long>, IUserDeviceRepository
-        where TContext : DbContext, IDevicesDbContext
+    public class UserDeviceRepository<TContext> : EfCoreRepository<TContext, UserDevice, long>, IUserDeviceRepository
+        where TContext : IEfCoreDbContext, IDevicesDbContext
     {
-        public UserDeviceRepository(TContext con) : base(con)
+        public UserDeviceRepository(IDbContextProvider<TContext> dbContextProvider) : base(dbContextProvider)
         {
         }
 
         public virtual async Task<UserDevice> GetByDeviceId(string deviceId)
         {
-            var q = Loader;
+            var q = await GetQueryableAsync();
             UserDevice userDevice = await q.FirstOrDefaultAsync(e => e.DeviceId == deviceId);
             return userDevice;
         }
 
         public virtual async Task<List<UserDevice>> GetDevices(DevicesRequest req)
         {
-            var q = Loader;
+            var q = await GetQueryableAsync();
 
             if (req.LoggedInDevicesOnly)
             {

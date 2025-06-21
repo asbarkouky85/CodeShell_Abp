@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp;
 using Volo.Abp.Modularity;
 using Volo.Abp.Threading;
+using Codeshell.Abp.Notifications;
 
 namespace Codeshell.Abp.Notifications
 {

@@ -208,12 +208,6 @@ namespace Codeshell.Abp.Linq
             return Expression.Lambda<Func<T, bool>>(mExpr, pExp);
         }
 
-
-        public static Expression<Func<T, bool>> Filter<T>(Expression<Func<T, bool>> f)
-        {
-            return f;
-        }
-
         public static MemberExpression GetMemberExpression(ParameterExpression pExp, string propertyName)
         {
             MemberExpression mExp = null;
@@ -303,5 +297,6 @@ namespace Codeshell.Abp.Linq
 
             return Expression.Lambda<Func<T, bool>>(ex3, paramExpr);
         }
+
     }
 }

@@ -33,23 +33,61 @@ namespace Codeshell.Abp.Extensions.Linq
                 tenantId);
         }
 
-        public static Task<PagedResult<TEntity>> ToPagedResult<TEntity>(
-           this IQueryable<TEntity> query, ICodeshellPagedRequest requestDto,
-           Func<string, Expression<Func<TEntity, bool>>> searchTermFilter = null)
-           where TEntity : class
+        public static CodeshellPagedRequest<T> GetPagedRequestFor<T>(this CodeshellPagedRequest request) where T : class
         {
-            if (searchTermFilter != null && !string.IsNullOrEmpty(requestDto.Filter))
+            var result = new CodeshellPagedRequest<T>
             {
-                var exp = searchTermFilter.Invoke(requestDto.Filter);
-                query = query.Where(exp);
-            }
-            var data = new PagedResult<TEntity>
-            {
-                TotalCount = query.Count(),
-                Items = query.PageWith(requestDto).ToList()
+                SkipCount = request.SkipCount,
+                Direction = request.Direction,
+                Filter = request.Filter,
+                MaxResultCount = request.MaxResultCount,
+                Sorting = request.Sorting
             };
-            return Task.FromResult(data);
 
+            if (request.FiltersJson != null)
+                result.ReadFilters(request.FiltersJson);
+
+            return result;
+        }
+
+        public static Expression<Func<T, bool>> GetExpression<T>(this IPropertyFilter filter) where T : class
+        {
+            switch (filter.FilterType)
+            {
+                case "equals":
+                    return Expressions.GetEqualsExpression<T>(filter.MemberName, filter.Value1);
+                case "string":
+                    return Expressions.GetStringContainsFilter<T>(filter.MemberName, filter.Value1);
+                case "decimal":
+                    return Expressions.GetRangeFilter<T>(filter.MemberName, decimal.Parse(filter.Value1), decimal.Parse(filter.Value2));
+                case "int":
+                    return Expressions.GetRangeFilter<T>(filter.MemberName, int.Parse(filter.Value1), int.Parse(filter.Value2));
+                case "date":
+                    var v1 = DateTime.MinValue;
+                    var v2 = DateTime.MaxValue;
+
+                    if (DateTime.TryParse(filter.Value1, out DateTime dt))
+                        v1 = dt.GetDayStart();
+
+                    if (DateTime.TryParse(filter.Value2, out DateTime dt2))
+                        v2 = dt2.GetDayEnd();
+
+                    return Expressions.GetRangeFilter<T>(filter.MemberName, v1, v2);
+                case "day":
+                    var vd1 = DateTime.MinValue;
+                    var vd2 = DateTime.MaxValue;
+
+                    if (DateTime.TryParse(filter.Value1, out DateTime dt3))
+                    {
+                        vd1 = dt3.GetDayStart();
+                        vd2 = dt3.GetDayEnd();
+                        return Expressions.GetRangeFilter<T>(filter.MemberName, vd1, vd2);
+                    }
+                    break;
+                case "reference":
+                    return Expressions.GetReferenceContainedFilter<T>(filter.MemberName, filter.Ids);
+            }
+            return null;
         }
     }
 }

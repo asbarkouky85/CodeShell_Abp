@@ -1,14 +1,10 @@
-﻿using Codeshell.Abp.EntityFramework;
-using Codeshell.Abp.Notifications;
-
-Codeshell.AbpCodeshell.AbpCodeshell.AbpCodeshell.AbpCodeshell.Abp
-using CodeshellCore.Notifications.Devices;
-using CodeshellCore.Notifications.Providers;
-using CodeshellCore.Notifications.Types;
-using CodeshellCore.Notifications.Users;
+﻿using Codeshell.Abp.Notifications.Devices;
+using Codeshell.Abp.Notifications.Providers;
+using Codeshell.Abp.Notifications.Types;
+using Codeshell.Abp.Notifications.Users;
 using Microsoft.EntityFrameworkCore;
 
-namespace CodeshellCore.Notifications
+namespace Codeshell.Abp.Notifications
 {
     public partial class NotificationsContext : CodeshellDbContext<NotificationsContext>, IDevicesDbContext
     {

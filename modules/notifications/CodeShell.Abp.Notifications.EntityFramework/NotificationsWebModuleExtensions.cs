@@ -1,8 +1,4 @@
-﻿using Codeshell.Abp.EntityFrameworkCore.Devices;
-using Codeshell.Abp.EntityFramework;
-using Codeshell.Abp.Extensions.DependencyInjection;
-using Codeshell.Abp.Notifications.Devices;
-using Microsoft.EntityFrameworkCore;
+﻿using Codeshell.Abp.Notifications.Devices;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Codeshell.Abp.Notifications
@@ -11,8 +7,8 @@ namespace Codeshell.Abp.Notifications
     {
         public static void AddCodeshellNotificationsEntityFramework<TDbContext>(this IServiceCollection coll) where TDbContext : CodeshellDbContext<TDbContext>, IDevicesDbContext
         {
-            coll.AddRepositoryFor<UserDevice, UserDeviceRepository<TDbContext>, IUserDeviceRepository>();
-            coll.AddUnitOfWork<CodeshellNotificationsUnit<TDbContext>, ICodeshellNotificationsUnit>();
+            coll.AddTransient<IUserDeviceRepository, UserDeviceRepository<TDbContext>>();
+            coll.AddScoped<IDevicesDbContext, TDbContext>();
         }
 
     }

@@ -1,4 +1,5 @@
 ﻿using Codeshell.Abp.Notifications.Devices;
+using System;
 
 namespace Codeshell.Abp.Notifications.Pushing
 {
@@ -9,22 +10,26 @@ namespace Codeshell.Abp.Notifications.Pushing
         {
 
         }
-        public string SetUserConnectionId(long tenantId, object userId)
+
+        private SignalRDeviceDataDto _constructRequest(string tenantId, object userId)
         {
-            return UpdateConnectionData(new SignalRDeviceDataDto
-            {
-                TenantId = tenantId,
-                UserId = long.Parse(userId.ToString())
-            });
+            var result = new SignalRDeviceDataDto();
+            if (Guid.TryParse(tenantId, out Guid tout))
+                result.TenantId = tout;
+
+            if (Guid.TryParse(userId.ToString(), out Guid uout))
+                result.UserId = uout.ToString();
+            return result;
         }
 
-        public void ClearUserConnectionId(long tenantId, object userId)
+        public string SetUserConnectionId(string tenantId, object userId)
         {
-            ClearConnectionData(new SignalRDeviceDataDto
-            {
-                TenantId = tenantId,
-                UserId = long.Parse(userId.ToString())
-            });
+            return UpdateConnectionData(_constructRequest(tenantId, userId));
+        }
+
+        public void ClearUserConnectionId(string tenantId, object userId)
+        {
+            ClearConnectionData(_constructRequest(tenantId, userId));
         }
     }
 }

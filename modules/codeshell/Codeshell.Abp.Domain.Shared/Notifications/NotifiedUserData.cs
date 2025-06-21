@@ -6,7 +6,7 @@ namespace Codeshell.Abp.Notifications
 {
     public class NotifiedUserData
     {
-        public long UserId { get; set; }
+        public Guid UserId { get; set; }
         public List<NotifyAttachmentData> Attachments { get; set; }
 
         public bool HasAttachments()

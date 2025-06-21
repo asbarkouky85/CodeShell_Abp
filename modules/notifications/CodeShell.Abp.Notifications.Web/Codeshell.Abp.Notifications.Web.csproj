@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Codeshell.Abp.Notifications.Application.Contracts\Codeshell.Abp.Notifications.Application.Contracts.csproj" />
-    <ProjectReference Include="..\Codeshell.Abp.Web\Codeshell.Abp.Web.csproj" />
+    <ProjectReference Include="..\..\codeshell\Codeshell.Abp.Http\Codeshell.Abp.Http.csproj" />
   </ItemGroup>
 
 </Project>

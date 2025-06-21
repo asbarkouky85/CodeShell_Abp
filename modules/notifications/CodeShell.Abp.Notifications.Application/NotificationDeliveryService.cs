@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Services;
+using Codeshell.Abp.Notifications;
 
 namespace Codeshell.Abp.Notifications.Senders
 {

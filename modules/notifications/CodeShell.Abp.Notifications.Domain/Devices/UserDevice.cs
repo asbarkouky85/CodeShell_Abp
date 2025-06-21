@@ -13,7 +13,7 @@ namespace Codeshell.Abp.Notifications.Devices
             Id = Utils.GenerateID();
         }
 
-        public UserDevice(string deviceId, long userId, Guid? tenantId, NotificationProviders deviceType, bool isLoggedIn = true) : this()
+        public UserDevice(string deviceId, Guid userId, Guid? tenantId, NotificationProviders deviceType, bool isLoggedIn = true) : this()
         {
             DeviceId = deviceId;
             UserId = userId;
@@ -27,7 +27,7 @@ namespace Codeshell.Abp.Notifications.Devices
         public NotificationProviders DeviceTypeId { get; set; }
         public NotificationProvider NotificationProvider { get; set; }
         public Guid? TenantId { get; set; }
-        public long UserId { get; set; }
+        public Guid UserId { get; set; }
         public bool IsLoggedIn { get; set; }
 
         public void SetConnectionId(string connection)

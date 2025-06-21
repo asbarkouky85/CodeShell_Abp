@@ -2,10 +2,13 @@
 using Codeshell.Abp.Devices;
 using Codeshell.Abp.Notifications.Devices;
 using Codeshell.Abp.Notifications.Pushing;
+using Codeshell.Abp.Repositories;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Services;
+using Codeshell.Abp.Notifications.Users;
 
 namespace Codeshell.Abp.Notifications.Senders
 {
@@ -13,6 +16,7 @@ namespace Codeshell.Abp.Notifications.Senders
     {
         IEmitter<INotificationsPushingContract> pusher => LazyServiceProvider.LazyGetRequiredService<IEmitter<INotificationsPushingContract>>();
         IUserDeviceRepository UserDeviceRepository => LazyServiceProvider.LazyGetRequiredService<IUserDeviceRepository>();
+        ICodeshellRepository<User, Guid> UserRepository => LazyServiceProvider.LazyGetRequiredService<ICodeshellRepository<User, Guid>>();
         public NotificationProviders ProviderId => NotificationProviders.List;
 
         public ListNotificationSender() : base()
@@ -23,7 +27,7 @@ namespace Codeshell.Abp.Notifications.Senders
         {
             if (deliveryData.User.UserId != null)
             {
-                var userNotificationCount = await Unit.UserRepository.FindSingleAs(d => new
+                var userNotificationCount = await UserRepository.GetSingleAs(d => new
                 {
                     d.Id,
                     Count = d.Notifications.Count(e => !e.IsRead && e.NotificationMessages.Any(e => e.NotificationProviderId == NotificationProviders.List))

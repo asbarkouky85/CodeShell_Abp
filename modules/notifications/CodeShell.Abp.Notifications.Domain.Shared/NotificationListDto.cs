@@ -1,5 +1,5 @@
-﻿using FMS.Notifications;
-using System;
+﻿using System;
+using Codeshell.Abp.Notifications;
 
 namespace Codeshell.Abp.Notifications
 {

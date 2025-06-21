@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace FMS.Notifications
+namespace Codeshell.Abp.Notifications
 {
     public interface INotificationListDto
     {

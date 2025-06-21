@@ -1,55 +1,55 @@
-﻿using Codeshell.Abp.Data.ConfiguredCollections;
-using Codeshell.Abp.Data.EntityFramework;
-using Codeshell.Abp.Extensions.DependencyInjection;
+﻿using Codeshell.Abp.Extensions.Linq;
 using Codeshell.Abp.Linq;
-using Codeshell.Abp.Security;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Volo.Abp.Domain.Repositories.EntityFrameworkCore;
+using Volo.Abp.EntityFrameworkCore;
 
 namespace Codeshell.Abp.Notifications
 {
-    public class NotificationRepository : KeyRepository<Notification, NotificationsContext, long>, INotificationRepository
+    public class NotificationRepository : EfCoreRepository<NotificationsContext, Notification, long>, INotificationRepository
     {
-        public NotificationRepository(NotificationsContext con) : base(con)
+        public NotificationRepository(IDbContextProvider<NotificationsContext> dbContextProvider) : base(dbContextProvider)
         {
         }
 
-
-        public async Task<PagedResult<Notification>> GetByUser(long id, PagedListRequest opts)
+        public async Task<PagedResult<Notification>> GetByUser(Guid id, CodeshellPagedRequest opts)
         {
-            var o = opts.GetOptionsFor<Notification>();
+            var o = opts.GetPagedRequestFor<Notification>();
 
-            var q = Loader;//;
-            if (!string.IsNullOrEmpty(o.SearchTerm))
+            var q = await GetQueryableAsync();//;
+            if (!string.IsNullOrEmpty(o.Filter))
             {
-                q = q.Where(d => d.SenderName.Contains(opts.SearchTerm) || d.NotificationType.Name.Contains(opts.SearchTerm) || d.Parameters.Contains(opts.SearchTerm));
+                q = q.Where(d => d.SenderName.Contains(opts.Filter) || d.NotificationType.Name.Contains(opts.Filter) || d.Parameters.Contains(opts.Filter));
             }
             var qSorted = q.Where(d =>
                 d.UserId == id &&
                 !d.IsRead &&
                 d.NotificationMessages.Any(e => e.NotificationProviderId == NotificationProviders.List)
-            ).OrderBy(d => d.IsRead).ThenByDescending(d => d.CreatedOn);
-            return await qSorted.ToPagedResultAsync(o);
+            ).OrderBy(d => d.IsRead).ThenByDescending(d => d.CreationTime);
+            return await qSorted.ToPagedResultForType(o);
         }
 
-        public async Task<PagedResult<NotificationMessage>> GetPendingMessages(PagedListRequest request)
+        public async Task<PagedResult<NotificationMessage>> GetPendingMessages(CodeshellPagedRequest request)
         {
-            var req = request.GetOptionsFor<NotificationMessage>();
-            var q = DbContext.Set<NotificationMessage>().AsQueryable().AsSplitQuery();
+            var req = request.GetPagedRequestFor<NotificationMessage>();
+            var q = (await GetDbContextAsync()).Set<NotificationMessage>().AsQueryable().AsSplitQuery();
             q = q.Include(e => e.Notification.User)
                 .Include(e => e.NotificationProvider);
-            return await q.Where(e => e.SendingStatusId == NotificationSendingStatus.New).ToPagedResultAsync(req);
+            return await q.Where(e => e.SendingStatusId == NotificationSendingStatus.New)
+                .ToPagedResultForType(req);
         }
 
-        public async Task<PagedResult<NotificationMessage>> GetPendingRetryMessages(PagedListRequest request)
+        public async Task<PagedResult<NotificationMessage>> GetPendingRetryMessages(CodeshellPagedRequest request)
         {
-            var req = request.GetOptionsFor<NotificationMessage>();
-            var q = DbContext.Set<NotificationMessage>().AsQueryable().AsSplitQuery();
+            var req = request.GetPagedRequestFor<NotificationMessage>();
+            var q = (await GetDbContextAsync()).Set<NotificationMessage>().AsQueryable().AsSplitQuery();
             q = q.Include(e => e.Notification.User)
                 .Include(e => e.NotificationProvider);
             return await q.Where(e => e.SendingStatusId == NotificationSendingStatus.Queued || e.SendingStatusId == NotificationSendingStatus.NoDevices)
-                .ToPagedResultAsync(req);
+                .ToPagedResultForType(req);
         }
     }
 }

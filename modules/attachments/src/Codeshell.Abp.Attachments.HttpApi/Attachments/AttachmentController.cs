@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Codeshell.Abp.Attachments.Attachments;
 
 namespace Codeshell.Abp.Attachments
 {

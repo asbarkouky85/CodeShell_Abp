@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.EventBus.Distributed;
 using Volo.Abp.Uow;
+using Codeshell.Abp.Attachments.Attachments;
 
 namespace Codeshell.Abp.Attachments.Events
 {

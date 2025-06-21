@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp.BackgroundWorkers;
 using Volo.Abp.Threading;
+using Codeshell.Abp.Attachments.Attachments;
 
 namespace Codeshell.Abp.Attachments.Jobs
 {

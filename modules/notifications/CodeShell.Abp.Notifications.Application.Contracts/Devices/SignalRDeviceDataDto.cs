@@ -6,7 +6,7 @@ namespace Codeshell.Abp.Notifications.Devices
 {
     public class SignalRDeviceDataDto
     {
-        public long UserId { get; set; }
+        public string UserId { get; set; }
         public string DeviceId { get; set; }
         public string Culture { get; set; }
         public Guid? TenantId { get; set; }

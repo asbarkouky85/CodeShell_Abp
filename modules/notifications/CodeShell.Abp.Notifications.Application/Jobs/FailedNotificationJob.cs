@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
+using Codeshell.Abp.Notifications;
 
 namespace Codeshell.Abp.Notifications.Jobs
 {

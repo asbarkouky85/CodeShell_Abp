@@ -4,8 +4,10 @@ using Codeshell.Abp.Files.Uploads;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Codeshell.Abp.Attachments.Attachments;
+using Codeshell.Abp.Attachments;
 
-namespace Codeshell.Abp.Attachments
+namespace Codeshell.Abp.Attachments.Attachments
 {
     public interface IAttachmentFileService
     {

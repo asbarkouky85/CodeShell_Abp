@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Volo.Abp.Application.Services;
 
 namespace Codeshell.Abp.Notifications.Devices
@@ -24,9 +25,9 @@ namespace Codeshell.Abp.Notifications.Devices
         public async Task UpdateSignalRConnectionData(SignalRDeviceDataDto data)
         {
             var dev = await _userRepo.GetByDeviceId(data.DeviceId);
-            if (dev == null)
+            if (dev == null && Guid.TryParse(data.UserId,out Guid userId))
             {
-                dev = new UserDevice(data.DeviceId, data.UserId, data.TenantId, NotificationProviders.Browser);
+                dev = new UserDevice(data.DeviceId, userId, data.TenantId, NotificationProviders.Browser);
                 await _userRepo.InsertAsync(dev);
             }
             dev.SetConnectionId(data.ConnectionId);

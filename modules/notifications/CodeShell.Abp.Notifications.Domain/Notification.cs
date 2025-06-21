@@ -1,11 +1,11 @@
 ﻿using Codeshell.Abp.Extensions;
 using Codeshell.Abp.Notifications.Types;
-using CodeshellCore.Notifications.Users;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Volo.Abp.Domain.Entities.Auditing;
+using Codeshell.Abp.Notifications.Users;
 
 namespace Codeshell.Abp.Notifications
 {

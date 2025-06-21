@@ -2,8 +2,9 @@
 using Codeshell.Abp.Files.Uploads;
 using System;
 using System.Threading.Tasks;
+using Codeshell.Abp.Attachments;
 
-namespace Codeshell.Abp.Attachments
+namespace Codeshell.Abp.Attachments.Attachments
 {
     public interface IInternalAttachmentService
     {

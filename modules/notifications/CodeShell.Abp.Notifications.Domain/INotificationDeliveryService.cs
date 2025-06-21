@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Codeshell.Abp.Notifications.Senders;
 
-namespace Codeshell.Abp.Notifications.Senders
+namespace Codeshell.Abp.Notifications
 {
     public interface INotificationDeliveryService
     {

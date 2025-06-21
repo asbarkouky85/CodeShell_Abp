@@ -17,6 +17,7 @@ using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Validation;
 using Codeshell.Abp.Attachments.Extensions;
+using Codeshell.Abp.Attachments.Attachments;
 
 namespace Codeshell.Abp.Attachments
 {

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Codeshell.Abp.Notifications.Devices;
 using Codeshell.Abp.Notifications.Senders;
-using CodeshellCore.Notifications.Users;
+using Codeshell.Abp.Notifications.Users;
 
 namespace Codeshell.Abp.Notifications
 {

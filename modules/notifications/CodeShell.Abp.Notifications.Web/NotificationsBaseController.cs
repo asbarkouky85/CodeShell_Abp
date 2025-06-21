@@ -1,15 +1,10 @@
-﻿using Codeshell.Abp.Web.Controllers;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Mvc;
+using Volo.Abp.AspNetCore.Mvc;
 
 namespace Codeshell.Abp.Notifications
 {
     [Area("Notifications")]
-    public abstract class NotificationsBaseController : BaseApiController
+    public abstract class NotificationsBaseController : AbpController
     {
     }
 }

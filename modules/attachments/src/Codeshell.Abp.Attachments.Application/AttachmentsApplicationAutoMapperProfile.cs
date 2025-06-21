@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Codeshell.Abp;
 using Codeshell.Abp.Attachments.Categories;
+using Codeshell.Abp.Attachments.Attachments;
 
 namespace Codeshell.Abp.Attachments
 {

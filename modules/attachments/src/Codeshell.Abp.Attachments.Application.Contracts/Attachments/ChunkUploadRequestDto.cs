@@ -1,7 +1,8 @@
 ﻿using Codeshell.Abp.Files;
 using System;
+using Codeshell.Abp.Attachments;
 
-namespace Codeshell.Abp.Attachments
+namespace Codeshell.Abp.Attachments.Attachments
 {
     public class ChunkUploadRequestDto : IFileInfo
     {

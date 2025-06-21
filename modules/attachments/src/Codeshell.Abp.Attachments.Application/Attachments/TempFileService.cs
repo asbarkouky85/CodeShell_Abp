@@ -13,6 +13,7 @@ using Volo.Abp.Domain.Services;
 using Volo.Abp.Settings;
 using Codeshell.Abp.Attachments.Extensions;
 using Volo.Abp.Uow;
+using Codeshell.Abp.Attachments.Attachments;
 
 namespace Codeshell.Abp.Attachments
 {

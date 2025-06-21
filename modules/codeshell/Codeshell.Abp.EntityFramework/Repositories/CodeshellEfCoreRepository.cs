@@ -61,7 +61,7 @@ namespace Codeshell.Abp.Repositories
             return await dtoQuery.ToPagedResult(req);
         }
 
-        public async Task<TDto> GetSingleProjected<TDto>(TPrime id) where TDto : class
+        public async Task<TDto> GetSingleAs<TDto>(TPrime id) where TDto : class
         {
             var q = (await GetDbSetAsync()).Where(e => e.Id.Equals(id));
             var dtoQuery = Projector.Project<TEntity, TDto>(q);
@@ -86,6 +86,16 @@ namespace Codeshell.Abp.Repositories
             if (filter != null)
                 q = q.Where(filter);
             return await q.Select(expression).ToListAsync();
+        }
+
+        public Task<TDto> GetSingleAs<TDto>(TPrime id, Expression<Func<TEntity, TDto>> expression) where TDto : class
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<TDto> GetSingleAs<TDto>(Expression<Func<TEntity, TDto>> expression, Expression<Func<TEntity, bool>> filter) where TDto : class
+        {
+            throw new NotImplementedException();
         }
     }
 }

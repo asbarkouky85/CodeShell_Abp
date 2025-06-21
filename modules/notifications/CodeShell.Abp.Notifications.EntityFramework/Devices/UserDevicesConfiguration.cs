@@ -1,5 +1,5 @@
-﻿using Codeshell.Abp.Notifications.Users;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Codeshell.Abp.Notifications.Users;
 
 namespace Codeshell.Abp.Notifications.Devices
 {
@@ -10,7 +10,7 @@ namespace Codeshell.Abp.Notifications.Devices
             modelBuilder.Entity<UserDevice>(entity =>
             {
                 entity.ToTable(prefix + "UserDevices", schema);
-                
+
                 entity.Property(e => e.Id).ValueGeneratedNever();
                 entity.Property(e => e.DeviceId).IsUnicode().HasMaxLength(255);
             });

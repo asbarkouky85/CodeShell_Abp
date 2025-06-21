@@ -1,14 +1,15 @@
 ﻿
 using Codeshell.Abp.Notifications;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Volo.Abp.Domain.Entities.Auditing;
 
-namespace CodeshellCore.Notifications.Users
+namespace Codeshell.Abp.Notifications.Users
 {
     [Table("Users", Schema = "Note")]
-    public partial class User : AuditedEntity<long>
+    public partial class User : AuditedEntity<Guid>
     {
         public User()
         {

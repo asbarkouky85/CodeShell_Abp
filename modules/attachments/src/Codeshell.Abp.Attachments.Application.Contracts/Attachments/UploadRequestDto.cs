@@ -3,8 +3,9 @@ using Codeshell.Abp.Http;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Codeshell.Abp.Attachments;
 
-namespace Codeshell.Abp.Attachments
+namespace Codeshell.Abp.Attachments.Attachments
 {
     public class UploadRequestDto
     {

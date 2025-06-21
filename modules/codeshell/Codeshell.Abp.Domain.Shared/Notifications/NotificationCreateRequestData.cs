@@ -15,7 +15,7 @@ namespace Codeshell.Abp.Notifications
         public string EntityId { get; set; }
         public object Parameters { get; set; }
 
-        public void AddUsers(params long[] ids)
+        public void AddUsers(params Guid[] ids)
         {
             if (Users == null)
                 Users = new List<NotifiedUserData>();
