@@ -1,4 +1,4 @@
-﻿namespace CodeShellCore.Integration.Twilio
+﻿namespace Codeshell.Abp.Integration.Twilio
 {
     public static class TwilioConstants
     {

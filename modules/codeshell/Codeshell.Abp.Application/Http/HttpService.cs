@@ -1,4 +1,5 @@
-﻿using Codeshell.Abp.Extensions;
+﻿using Codeshell.Abp.Exceptions;
+using Codeshell.Abp.Extensions;
 using Codeshell.Abp.Files;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -92,11 +93,45 @@ namespace Codeshell.Abp.Http
             HttpResponseMessage res = await ExecutePostAsync(url, data, query);
             return await DeserializeAsync<T>(res);
         }
+        public async Task<T> PostUrlEncoded<T>(string url, object data, object query = null) where T : class
+        {
+            var res = await PostUrlEncodedAsync(url, data, query);
+
+            if (!res.IsSuccessStatusCode)
+                throw new RemoteServerException(res);
+            else
+            {
+                var content = await res.Content.ReadAsStringAsync();
+                return content.FromJson<T>();
+            }
+        }
+
+        public async Task<HttpResponseMessage> PostUrlEncodedAsync(string url, object data, object query = null)
+        {
+            var Client = new HttpClient();
+            await BuildClientAsync(Client);
+            Uri uri = GetUri(url, query);
+
+            var c = data.ToDictionaryOfProperties();
+            var content = new FormUrlEncodedContent(c);
+
+            HttpResponseMessage res = await Client.PostAsync(uri, content);
+
+            if (res.IsSuccessStatusCode)
+            {
+                return res;
+            }
+            else
+            {
+                throw new RemoteServerException(res);
+            }
+
+        }
 
         protected virtual async Task<Exception> ToExceptionAsync(HttpResponseMessage res)
         {
             var st = await res.Content.ReadAsStringAsync();
-            return new HttpServiceException(res.StatusCode, st, res.RequestMessage?.RequestUri);
+            return new RemoteServerException(res);
         }
 
         protected virtual async Task<HttpResponseMessage> ExecuteGetAsync(string url, object query = null)

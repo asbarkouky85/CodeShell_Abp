@@ -3,6 +3,7 @@ using Codeshell.Abp.Results;
 using System;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Volo.Abp.Threading;
 
 namespace Codeshell.Abp.Exceptions
@@ -19,37 +20,54 @@ namespace Codeshell.Abp.Exceptions
         }
         public RemoteServerException(HttpResponseMessage mes, Uri uri = null, string method = null)
         {
-            Status = mes.StatusCode;
             AsyncHelper.RunSync(async () =>
             {
-                var res = await mes.Content.ReadAsStringAsync();
-                if (res.TryRead(out Result resData))
-                {
-                    _message = resData.Message;
-                    RemoteResult = new RemoteServerResult
-                    {
-                        RequestUrl = uri != null ? uri.AbsoluteUri : mes.RequestMessage?.RequestUri.ToString(),
-                        Code = (int)mes.StatusCode,
-                        Message = "Server responded with error : " + resData.Message,
-                        ExceptionMessage = resData.ExceptionMessage,
-                        Method = method ?? mes.RequestMessage?.Method.ToString()
-                    };
-                }
-                else
-                {
-                    _message = res;
-                    RemoteResult = new RemoteServerResult
-                    {
-                        RequestUrl = uri != null ? uri.AbsoluteUri : mes.RequestMessage?.RequestUri.ToString(),
-                        Code = (int)mes.StatusCode,
-                        Message = mes.StatusCode.ToString(),
-                        ExceptionMessage = await mes.Content.ReadAsStringAsync(),
-                        Method = method ?? mes.RequestMessage?.Method.ToString()
-                    };
-                }
+                await _fillFromResponseAsync(this, mes, uri, method);
             });
+        }
 
+        private RemoteServerException()
+        {
 
+        }
+
+        private static async Task _fillFromResponseAsync(RemoteServerException result, HttpResponseMessage mes, Uri uri = null, string method = null)
+        {
+            result.Status = mes.StatusCode;
+            var res = await mes.Content.ReadAsStringAsync();
+            uri = uri ?? mes.RequestMessage.RequestUri;
+            method = method ?? mes.RequestMessage?.Method.ToString();
+            if (res.TryRead(out Result resData))
+            {
+                result._message = resData.Message;
+                result.RemoteResult = new RemoteServerResult
+                {
+                    RequestUrl = uri != null ? uri.AbsoluteUri : mes.RequestMessage?.RequestUri.ToString(),
+                    Code = (int)mes.StatusCode,
+                    Message = "Server responded with error : " + resData.Message,
+                    ExceptionMessage = resData.ExceptionMessage,
+                    Method = method
+                };
+            }
+            else
+            {
+                result._message = res;
+                result.RemoteResult = new RemoteServerResult
+                {
+                    RequestUrl = uri != null ? uri.AbsoluteUri : mes.RequestMessage?.RequestUri.ToString(),
+                    Code = (int)mes.StatusCode,
+                    Message = mes.StatusCode.ToString(),
+                    ExceptionMessage = await mes.Content.ReadAsStringAsync(),
+                    Method = method ?? mes.RequestMessage?.Method.ToString()
+                };
+            }
+        }
+
+        public async static Task<RemoteServerException> FromResponse(HttpResponseMessage mes, Uri uri = null, string method = null)
+        {
+            var ex = new RemoteServerException();
+            await _fillFromResponseAsync(ex, mes, uri, method);
+            return ex;
         }
 
         public RemoteServerException(HttpStatusCode code, string message)

@@ -68,7 +68,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Importation", "Importation"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codeshell.Abp.Integration.Firebase", "modules\proxy\CodeShell.Abp.Proxy.Firebase\Codeshell.Abp.Integration.Firebase.csproj", "{E139F42D-BE78-6AC9-833D-AF234DD6FB37}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeShellCore.Integration.Twilio", "modules\proxy\CodeShell.Abp.Proxy.Twillio\CodeShellCore.Integration.Twilio.csproj", "{4BCB5DAF-7C98-FEB1-1E1B-BAB590DE26D3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Codeshell.Abp.Integration.Twilio", "modules\proxy\CodeShell.Abp.Proxy.Twillio\Codeshell.Abp.Integration.Twilio.csproj", "{4BCB5DAF-7C98-FEB1-1E1B-BAB590DE26D3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

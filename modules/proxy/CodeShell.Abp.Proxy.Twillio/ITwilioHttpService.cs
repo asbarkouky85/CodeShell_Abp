@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
-using CodeShellCore.Integration.Twilio.Http;
 
-namespace CodeShellCore.Integration.Twilio.Http
+namespace Codeshell.Abp.Integration.Twilio
 {
     public interface ITwilioHttpService
     {

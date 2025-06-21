@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace CodeShellCore.Integration.Twilio.Extensions
+namespace Codeshell.Abp.Integration.Twilio.Extensions
 {
     public static class TwilioTextExtensions
     {

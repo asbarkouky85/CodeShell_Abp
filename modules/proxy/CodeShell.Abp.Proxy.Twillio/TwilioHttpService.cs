@@ -7,10 +7,8 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using CodeShellCore.Integration.Twilio;
-using CodeShellCore.Integration.Twilio.Http;
 
-namespace CodeShellCore.Integration.Twilio.Http
+namespace Codeshell.Abp.Integration.Twilio
 {
     public class TwilioHttpService : HttpService, ITwilioHttpService
     {
@@ -21,11 +19,9 @@ namespace CodeShellCore.Integration.Twilio.Http
             BaseUrl = options.Value.Url;
             Options = options.Value;
         }
-
-        protected override Task ConfigureClient(HttpClient client)
+        protected override Task BuildClientAsync(HttpClient client)
         {
             var byteArray = Encoding.ASCII.GetBytes($"{Options.UserName}:{Options.Password}");
-
 
             client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/x-www-form-urlencoded");
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));

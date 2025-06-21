@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CodeShellCore.Integration.Twilio.Http
+namespace Codeshell.Abp.Integration.Twilio
 {
 
     public class TwilioSubResourceDto

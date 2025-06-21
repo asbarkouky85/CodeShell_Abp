@@ -1,20 +1,13 @@
-﻿using Codeshell.Abp.Files;
+﻿using Codeshell.Abp.Extensions;
+using Codeshell.Abp.Integration.Twilio.Extensions;
 using Codeshell.Abp.Notifications;
 using Codeshell.Abp.Notifications.Senders;
-using Codeshell.Abp.Services;
-using Codeshell.Abp.Text;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
-using CodeShellCore.Integration.Twilio;
-using CodeShellCore.Integration.Twilio.Extensions;
-using CodeShellCore.Integration.Twilio.Http;
 
-namespace CodeShellCore.Integration.Twilio
+namespace Codeshell.Abp.Integration.Twilio
 {
     public class TwilioNotificationSender : INotificationSender
     {
@@ -41,7 +34,7 @@ namespace CodeShellCore.Integration.Twilio
                     var req = new TwilioRequestDto
                     {
                         ContentSid = deliveryData.TemplateCode,
-                        ContentVariables = deliveryData.Parameters.FromJson<Dictionary<string,string>>(),
+                        ContentVariables = deliveryData.Parameters.FromJson<Dictionary<string, string>>(),
                         From = options.Value.FromNumber.ToTwilioPhoneNumber(),
                         To = deliveryData.User.PhoneNumber.ToTwilioPhoneNumber()
                     };

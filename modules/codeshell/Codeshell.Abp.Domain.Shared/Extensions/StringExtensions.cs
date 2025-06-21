@@ -1,7 +1,10 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -213,6 +216,26 @@ namespace Codeshell.Abp.Extensions
         {
             long.TryParse(str, out long value);
             return value;
+        }
+
+        public static Dictionary<string, string> ToDictionaryOfProperties(this object data)
+        {
+            PropertyInfo[] props = data.GetType().GetProperties();
+            var res = new Dictionary<string, string>();
+            foreach (PropertyInfo inf in props)
+            {
+                var val = inf.GetValue(data);
+                if (val != null && val.GetType().GetInterfaces().Contains(typeof(IDictionary)))
+                {
+                    res[inf.Name] = val.ToJson();
+                }
+                else
+                {
+                    res[inf.Name] = inf.GetValue(data)?.ToString();
+
+                }
+            }
+            return res;
         }
     }
 }

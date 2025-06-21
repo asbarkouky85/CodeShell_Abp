@@ -1,10 +1,9 @@
 ﻿using Codeshell.Abp;
 using Codeshell.Abp.Notifications.Senders;
-using CodeShellCore.Integration.Twilio.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.Modularity;
 
-namespace CodeShellCore.Integration.Twilio
+namespace Codeshell.Abp.Integration.Twilio
 {
     [DependsOn(
         typeof(CodeshellApplicationModule)
