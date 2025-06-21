@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		 <TargetFramework>net8.0</TargetFramework>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="DistributedLock.SqlServer" />
+		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
+		<PackageReference Include="Volo.Abp.EntityFrameworkCore" />
+		<PackageReference Include="DistributedLock.Redis" />
+		<PackageReference Include="Volo.Abp.EventBus.RabbitMQ" />
+		<PackageReference Include="Volo.Abp.DistributedLocking" />
+		
+
+	</ItemGroup>
+</Project>

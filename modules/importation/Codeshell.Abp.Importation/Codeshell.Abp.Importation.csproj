@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<RootNamespace>Codeshell.Abp</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="DistributedLock.Redis" />
+		<PackageReference Include="EPPlus.Core" />
+		<!--<PackageReference Include="Open-XML-SDK" Version="2.9.1" />-->
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\codeshell\Codeshell.Abp.Domain.Shared\Codeshell.Abp.Domain.Shared.csproj" />
+	</ItemGroup>
+</Project>
