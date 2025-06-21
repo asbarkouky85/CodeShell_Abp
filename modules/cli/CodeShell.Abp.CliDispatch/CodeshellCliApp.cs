@@ -1,6 +1,6 @@
-﻿using Codeshell.Abp.Cli.Arguments;
-using Codeshell.Abp.Cli.Routing;
-using Codeshell.Abp.Cli.Services;
+﻿using Codeshell.Abp.Cli;
+using Codeshell.Abp.CliDispatch.Hosting;
+using Codeshell.Abp.CliDispatch.Routing;
 using Codeshell.Abp.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -12,11 +12,11 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Volo.Abp.Modularity;
 
-namespace Codeshell.Abp.Cli
+namespace Codeshell.Abp.CliDispatch
 {
     public static class CodeshellCliApp
     {
-        public static async Task RunAsync<TModule>(string[] args, Action<CliModuleRoutes>? moduleRegister = null) where TModule : AbpModule
+        public static async Task RunAsync<TModule>(string[] args, Action<CliModuleRoutes> moduleRegister = null) where TModule : AbpModule
         {
             var entry = Assembly.GetEntryAssembly();
             Console.WriteLine("---------------------------------------------------------");
@@ -42,7 +42,7 @@ namespace Codeshell.Abp.Cli
         {
             List<string> useArgs = new List<string>();
             var env = "local";
-            string? module = null;
+            string module = null;
             foreach (var arg in args)
             {
                 if (module == null)
@@ -54,6 +54,7 @@ namespace Codeshell.Abp.Cli
                     else
                     {
                         module = "_default";
+                        useArgs.Add(arg);
                     }
                 }
                 else if (arg.StartsWith("env="))

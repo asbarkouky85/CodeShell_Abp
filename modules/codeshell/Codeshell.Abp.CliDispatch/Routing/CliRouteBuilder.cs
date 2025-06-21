@@ -1,10 +1,11 @@
-﻿using Codeshell.Abp.Extensions;
+﻿using CodeShellCore.Text;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
-namespace Codeshell.Abp.CliDispatch.Routing
+namespace CodeShellCore.CliDispatch.Routing
 {
     internal class CliRouteBuilder : ICliRouteBuilder
     {
@@ -49,7 +50,7 @@ namespace Codeshell.Abp.CliDispatch.Routing
 
                     return handler;
                 }
-
+                
             }
             return null;
         }

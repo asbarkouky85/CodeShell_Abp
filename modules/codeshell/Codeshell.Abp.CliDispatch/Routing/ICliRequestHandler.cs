@@ -1,12 +1,11 @@
-﻿using Codeshell.Abp.Helpers;
-using Codeshell.Abp.Results;
+﻿using CodeShellCore.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Codeshell.Abp.CliDispatch.Routing
+namespace CodeShellCore.CliDispatch.Routing
 {
     public interface ICliRequestHandler
     {

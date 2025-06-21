@@ -1,33 +1,40 @@
-﻿using Codeshell.Abp.Cli;
-using Codeshell.Abp.CliDispatch.Parsing;
-using Codeshell.Abp.Results;
+﻿using CodeShellCore.Cli;
+using CodeShellCore.CliDispatch.Parsing;
+using CodeShellCore.Helpers;
+using CodeShellCore.Text;
+using CodeShellCore.Types;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Codeshell.Abp.CliDispatch.Routing
+namespace CodeShellCore.CliDispatch.Routing
 {
     public abstract class CliRequestHandler<T> : ConsoleService, ICliRequestHandler where T : class
     {
         public abstract string FunctionDescription { get; }
         public virtual bool RunInBackground => false;
+        protected InstanceStore<object> Store { get; private set; }
+        protected IServiceProvider ServiceProvider { get; private set; }
         protected Dictionary<string, string> ExtraArgs { get; set; } = new Dictionary<string, string>();
 
 
-        protected CliRequestHandler()
+        protected CliRequestHandler(IServiceProvider provider)
         {
-
+            ServiceProvider = provider;
+            Out = provider.GetRequiredService<IOutputWriter>();
+            Store = new InstanceStore<object>(provider);
         }
 
         protected TService GetService<TService>() where TService : class
         {
-            return LazyServiceProvider.LazyGetService<TService>();
+            return Store.GetInstance<TService>();
         }
 
         protected object GetService(Type t)
         {
-            return LazyServiceProvider.LazyGetService(t);
+            return Store.GetInstance(t);
         }
 
         protected abstract void Build(ICliRequestBuilder<T> builder);
@@ -65,6 +72,5 @@ namespace Codeshell.Abp.CliDispatch.Routing
                 ExtraArgs[arg.Key] = arg.Value;
             }
         }
-
     }
 }

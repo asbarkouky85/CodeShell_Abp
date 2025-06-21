@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Codeshell.Abp.CliDispatch.Routing;
 
-namespace Codeshell.Abp.CliDispatch.Routing
+namespace CodeShellCore.CliDispatch.Routing
 {
     public interface ICliRouteBuilder
     {

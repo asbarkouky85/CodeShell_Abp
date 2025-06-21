@@ -1,29 +1,33 @@
-﻿using Codeshell.Abp.Extensions;
-using Codeshell.Abp.Text;
+﻿using CodeShellCore.Text;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq.Expressions;
+using System.Text;
+using CodeShellCore.Types;
+using CodeShellCore.Text.Localization;
+using CodeShellCore.Helpers;
 
-namespace Codeshell.Abp.CliDispatch.Parsing
+namespace CodeShellCore.CliDispatch.Parsing
 {
     public abstract class ArgumentItem<T>
     {
-        public string CharacterSymbol { get; protected set; }
-        public string Key { get; protected set; }
+        public string? CharacterSymbol { get; protected set; }
+        public string? Key { get; protected set; }
         public int? Order { get; protected set; }
         public bool IsRequired { get; protected set; }
         public bool IsSet { get; protected set; }
-        public string MemberName { get; protected set; }
+        public string? MemberName { get; protected set; }
         public virtual bool IsBool { get; }
         public virtual bool IsEnum { get; }
         public string Description { get; set; }
         public string[] Options { get; protected set; }
-        
+        public T Item;
 
         protected ArgumentItem() { }
 
         public abstract void SetMemberValue(T obj, string v);
-        public virtual string GetDefault()
+        public virtual string? GetDefault()
         {
             return null;
         }

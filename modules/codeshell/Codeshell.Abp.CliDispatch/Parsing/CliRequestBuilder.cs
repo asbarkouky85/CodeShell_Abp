@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using Codeshell.Abp.Cli;
-using Codeshell.Abp.CliDispatch.Parsing;
+using CodeShellCore.Cli;
 
-namespace Codeshell.Abp.CliDispatch.Parsing
+namespace CodeShellCore.CliDispatch.Parsing
 {
     internal class CliRequestBuilder<T> : ICliRequestBuilder<T>
     {

@@ -1,14 +1,12 @@
-﻿using Codeshell.Abp.Helpers;
+﻿using CodeShellCore.Helpers;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Codeshell.Abp.CliDispatch;
-using Codeshell.Abp.CliDispatch.Parsing;
 
-namespace Codeshell.Abp.CliDispatch.Parsing
+namespace CodeShellCore.CliDispatch.Parsing
 {
     public static class CliDispatcher
     {

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Linq;
-using Codeshell.Abp.CliDispatch.Parsing;
 
-namespace Codeshell.Abp.CliDispatch.Parsing
+namespace CodeShellCore.CliDispatch.Parsing
 {
     public class CliArgumentParser<T> where T : class
     {

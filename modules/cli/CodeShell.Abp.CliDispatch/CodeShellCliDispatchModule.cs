@@ -1,120 +1,22 @@
-﻿using CodeShellCore.Cli;
-using CodeShellCore.CliDispatch.Routing;
-using CodeShellCore.Modularity;
-using CodeShellCore.Security.Authorization;
-using CodeShellCore.Tasks;
+﻿using Codeshell.Abp.CliDispatch.Help;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Concurrent;
-using System.Threading;
-using System.Threading.Tasks;
+using Volo.Abp.BackgroundWorkers;
+using Volo.Abp.Modularity;
 
-namespace CodeShellCore.CliDispatch
+namespace Codeshell.Abp.CliDispatch
 {
-
-    public class ExceptionCatcher
-    {
-        public void Start()
-        {
-
-        }
-
-
-    }
-
     [DependsOn(
-        typeof(CodeShellApplicationModule)
+        typeof(CodeshellApplicationModule)
         )]
-    public class CodeShellCliDispatchModule : CodeShellModule
+    public class CodeShellCliDispatchModule : AbpModule
     {
-        public override void RegisterServices(CodeshellAppContext context)
+        public override void ConfigureServices(ServiceConfigurationContext context)
         {
+            Configure<AbpBackgroundWorkerOptions>(e => e.IsEnabled = false);
             context.Services.AddOptions<CliDispatchOptions>();
-            context.Services.AddSingleton<AuthorizationService>();
+            var builder = context.Services.GetCliRouteBuilder();
+            builder.AddHandler<HelpRequestHandler>("help");
         }
 
-        public override void OnApplicationStarted(CodeShellApplicationInitializationContext context)
-        {
-            var hostApplicationLifeTime = context.ServiceProvider.GetRequiredService<IHostApplicationLifetime>();
-
-            
-            AsyncHelper.RunSync(() => _runAsync(context));
-
-            hostApplicationLifeTime.StopApplication();
-
-        }
-
-        private async Task _runAsync(CodeShellApplicationInitializationContext context)
-        {
-            using (var sc = context.ServiceProvider.CreateScope())
-            {
-                bool isSuccess = false;
-                try
-                {
-                    var functionName = context.Arguments.Length > 0 ? context.Arguments[0] : null;
-                    var routeBuilder = sc.ServiceProvider.GetRequiredService<ICliRouteBuilder>();
-                    var cliRequestHandler = routeBuilder.GetHandler(functionName, sc.ServiceProvider);
-                    if (cliRequestHandler == null)
-                    {
-                        Console.WriteLine("Unknow function : " + functionName);
-                        return;
-                    }
-                    var cts = new CancellationTokenSource();
-
-                    if (cliRequestHandler.RunInBackground)
-                    {
-                        var t = cliRequestHandler.HandleAsync(context.Arguments, cts.Token);
-
-                        t.GetAwaiter().OnCompleted(() =>
-                        {
-                            isSuccess = true;
-                            cts.Cancel();
-                        });
-
-                        WaitForKey(cts.Token);
-
-                        cts.Cancel();
-                        cts.Token.ThrowIfCancellationRequested();
-                    }
-                    else
-                    {
-                        await cliRequestHandler.HandleAsync(context.Arguments, cts.Token);
-                    }
-
-                }
-                catch (OperationCanceledException)
-                {
-                    if (!isSuccess)
-                    {
-                        Console.WriteLine();
-                        Console.WriteLine("Task Cancelled");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    var writer = sc.ServiceProvider.GetRequiredService<IOutputWriter>();
-                    var c = new ConsoleService(writer);
-                    c.WriteException(ex);
-                }
-
-            }
-        }
-
-
-        private ConsoleKeyInfo WaitForKey(CancellationToken token)
-        {
-            int delay = 0;
-            while (true)
-            {
-                if (Console.KeyAvailable)
-                {
-                    return Console.ReadKey();
-                }
-                token.ThrowIfCancellationRequested();
-                Thread.Sleep(50);
-                delay += 50;
-            }
-        }
     }
 }

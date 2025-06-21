@@ -1,5 +1,6 @@
 ﻿using Codeshell.Abp.Exceptions;
 using Codeshell.Abp.Extensions;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -312,6 +313,21 @@ namespace Codeshell.Abp
 
             }
             return strings.ToArray();
+        }
+
+        public static IConfigurationRoot LoadConfigurationFrom(string path, string environment = null)
+        {
+            environment = environment ?? Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            var conf = new ConfigurationBuilder();
+            //BuildConfiguration(conf);
+            Console.WriteLine("Reading config from [" + path + "\\appsettings." + (environment == null ? "" : environment) + ".json");
+            conf.AddJsonFile(Path.Combine(path, $"appsettings.json"), true, true);
+            if (environment != null)
+            {
+                conf.AddJsonFile(Path.Combine(path, $"appsettings.{environment}.json"), true, true);
+            }
+            Environment.SetEnvironmentVariable("CODESHELL_SETTINGS_PATH", path);
+            return conf.Build();
         }
 
         public async static Task RunWithUnitOfWork(Func<IServiceProvider, Task> action)

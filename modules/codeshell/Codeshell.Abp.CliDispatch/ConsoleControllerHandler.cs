@@ -1,15 +1,21 @@
-﻿using Codeshell.Abp.CliDispatch.Controllers;
-using Codeshell.Abp.CliDispatch.Parsing;
-using Codeshell.Abp.CliDispatch.Routing;
-using Codeshell.Abp.Results;
+﻿using CodeShellCore.Cli;
+using CodeShellCore.CliDispatch.Parsing;
+using CodeShellCore.CliDispatch.Routing;
+using CodeShellCore.Helpers;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Codeshell.Abp.CliDispatch
+namespace CodeShellCore.CliDispatch
 {
     public class ConsoleControllerHandler<TController> : CliRequestHandler<object> where TController : ConsoleController
     {
+        public ConsoleControllerHandler(IServiceProvider provider) : base(provider)
+        {
+        }
 
         public override string FunctionDescription => "Routing using numbers";
 
@@ -18,7 +24,7 @@ namespace Codeshell.Abp.CliDispatch
 
         }
 
-        protected override async Task<Result> HandleAsync(object request, CancellationToken token)
+        protected override async Task<Result> HandleAsync(object request,CancellationToken token)
         {
             var cont = Activator.CreateInstance<TController>();
             cont.IsMain = true;

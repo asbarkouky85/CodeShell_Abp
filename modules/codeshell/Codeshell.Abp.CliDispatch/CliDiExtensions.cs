@@ -1,8 +1,13 @@
-﻿using Codeshell.Abp.CliDispatch.Controllers;
-using Codeshell.Abp.CliDispatch.Routing;
+﻿using CodeShellCore.Cli;
+using CodeShellCore.CliDispatch.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Codeshell.Abp.CliDispatch
+namespace CodeShellCore.CliDispatch
 {
     public static class CliDiExtensions
     {

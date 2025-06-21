@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using Codeshell.Abp.CliDispatch.Parsing;
 
-namespace Codeshell.Abp.CliDispatch.Parsing
+namespace CodeShellCore.CliDispatch.Parsing
 {
     public interface ICliRequestBuilder<T>
     {
